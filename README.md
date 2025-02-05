@@ -88,6 +88,44 @@ Visit [http://localhost:3000](http://localhost:3000) to see your app.
   - `stories/` - Storybook files
 - `prisma/` - Database schema
 
+## 🚀 Deployment
+
+This template is optimized for deployment on [Vercel](https://vercel.com).
+
+### Database Setup
+
+1. Create a new Supabase project at [supabase.com](https://supabase.com)
+2. Get your database connection strings from Supabase:
+   - Project Settings → Database
+   - Copy both the URI (for `DATABASE_URL`) and Direct Connection (for `DIRECT_URL`)
+
+### Vercel Setup
+
+1. Push your code to GitHub
+2. Go to [vercel.com/new](https://vercel.com/new)
+3. Import your repository
+4. Configure the following environment variables:
+   - `DATABASE_URL` - Your Supabase database URL
+   - `DIRECT_URL` - Your Supabase direct connection URL
+   - `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
+   - `NEXTAUTH_URL` - Your production URL (e.g., https://your-app.vercel.app)
+   - Add any other variables from `.env.example` that you're using
+5. Deploy!
+
+### Post-Deployment
+
+1. Run database migrations in the Vercel deployment:
+
+```bash
+npx vercel env pull .env.production.local  # Pull production env vars
+npx prisma migrate deploy                  # Deploy migrations to production
+```
+
+2. Set up your custom domain in Vercel (optional):
+   - Go to your project settings
+   - Navigate to Domains
+   - Add your domain and follow the DNS configuration instructions
+
 ## 📝 License
 
 MIT License
