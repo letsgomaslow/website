@@ -11,3 +11,15 @@
   - [x] Search/Filter bar
     - [x] Search input field
     - [x] Resource type filter dropdown 
+- [ ] Task 12: Case Studies Page
+  - [x] Develop a grid layout for case studies
+  - [x] Case Study 1: Financial Services Transformation
+    - [x] Problem: "A leading bank faced inefficiencies in customer service workflows due to outdated systems."
+    - [x] Solution: "Maslow AI implemented a generative AI-powered chatbot using open‑source tools."
+    - [x] Outcome: "Reduced response times by 40% and improved customer satisfaction by 30%."
+  - [x] Case Study 2: Healthcare Compliance with TRiSM
+    - [x] Problem: "A healthcare provider struggled with data privacy regulation compliance."
+    - [x] Solution: "Deployed the TRiSM framework alongside custom risk management tools."
+    - [x] Outcome: "Achieved 100% compliance while safeguarding patient data."
+  - [x] Added two additional case studies for Manufacturing and Retail industries
+  - [x] Used the 21st.dev Cards component styling 
