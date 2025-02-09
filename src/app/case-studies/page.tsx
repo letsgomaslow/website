@@ -7,28 +7,28 @@ const caseStudies = [
     industry: "Financial Services",
     problem: "A leading bank faced inefficiencies in customer service workflows due to outdated systems.",
     solution: "Maslow AI implemented a generative AI-powered chatbot using open‑source tools.",
-    outcome: "Reduced response times by 40% and improved customer satisfaction by 30%.",
+    outcome: "[Example Metrics] Reduced response times by 40% and improved customer satisfaction by 30%.",
   },
   {
     title: "Healthcare Compliance with TRiSM",
     industry: "Healthcare",
     problem: "A healthcare provider struggled with data privacy regulation compliance.",
     solution: "Deployed the TRiSM framework alongside custom risk management tools.",
-    outcome: "Achieved 100% compliance while safeguarding patient data.",
+    outcome: "[Example Metrics] Achieved 100% compliance while safeguarding patient data.",
   },
   {
     title: "Manufacturing Process Optimization",
     industry: "Manufacturing",
     problem: "A global manufacturer faced production inefficiencies and quality control challenges.",
     solution: "Implemented AI-powered predictive maintenance and quality control systems.",
-    outcome: "Reduced downtime by 35% and improved product quality metrics by 25%.",
+    outcome: "[Example Metrics] Reduced downtime by 35% and improved product quality metrics by 25%.",
   },
   {
     title: "Retail Customer Experience Enhancement",
     industry: "Retail",
     problem: "A retail chain struggled with personalization and inventory management.",
     solution: "Deployed AI-driven customer analytics and inventory optimization tools.",
-    outcome: "Increased sales by 20% and reduced stockouts by 45%.",
+    outcome: "[Example Metrics] Increased sales by 20% and reduced stockouts by 45%.",
   },
 ];
 
