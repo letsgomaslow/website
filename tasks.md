@@ -1,0 +1,13 @@
+- [ ] Task 11: Resources Page
+  - [x] Articles & Blogs section
+    - [x] Grid layout of blog posts/articles
+    - [x] Title, summary, and read more link for each
+  - [x] Whitepapers & Guides section
+    - [x] List of downloadable resources
+    - [x] Title, description, and download button
+  - [x] Webinars & Workshops section
+    - [x] Upcoming events listing
+    - [x] Date, time, and registration button
+  - [x] Search/Filter bar
+    - [x] Search input field
+    - [x] Resource type filter dropdown 
