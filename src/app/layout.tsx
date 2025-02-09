@@ -6,10 +6,12 @@ import { Metadata } from "next";
 import ClientProvider from "@/components/ClientProvider";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ThemeAwareToast } from "@/components/theme/ThemeAwareToast";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "",
-  description: "",
+  title: "Maslow AI - Enterprise AI Solutions",
+  description: "Transform your enterprise with ethical, scalable, and impactful AI solutions.",
   icons: {
     icon: "/favicon.ico",
   },
@@ -26,7 +28,11 @@ export default function RootLayout({
         <ThemeProvider defaultTheme="system" enableSystem>
           <ClientProvider>
             <TRPCReactProvider>
-              {children}
+              <div className="relative min-h-screen">
+                <Header />
+                <main className="container py-12">{children}</main>
+                <Footer />
+              </div>
               <ThemeAwareToast />
             </TRPCReactProvider>
           </ClientProvider>
