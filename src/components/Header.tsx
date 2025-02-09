@@ -1,46 +1,72 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils/shared";
+import { Home, Briefcase, User, Book, FileText, Phone } from "lucide-react";
+import { NavBar } from "@/components/ui/tubelight-navbar";
+import { ThemeToggle } from "./theme/ThemeToggle";
 
 const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/services", label: "Services" },
-  { href: "/about", label: "About Us" },
-  { href: "/resources", label: "Resources" },
-  { href: "/case-studies", label: "Case Studies" },
-  { href: "/contact", label: "Contact Us" },
+  { name: "Home", url: "/", icon: Home },
+  { name: "Services", url: "/services", icon: Briefcase },
+  { name: "About Us", url: "/about", icon: User },
+  { name: "Resources", url: "/resources", icon: Book },
+  { name: "Case Studies", url: "/case-studies", icon: FileText },
+  { name: "Contact Us", url: "/contact", icon: Phone },
 ];
 
 export function Header() {
-  const pathname = usePathname();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // During SSR and before hydration, display a placeholder
+  if (!mounted) {
+    return (
+      <header className="fixed top-0 z-50 w-full">
+        <div className="container flex h-16 items-center justify-between">
+          <Link href="/" className="flex items-center space-x-2 z-50">
+            <div className="relative h-8 w-[160px] bg-muted/10" />
+          </Link>
+          <div className="flex items-center space-x-4">
+            <div className="h-9 w-9" />
+          </div>
+        </div>
+        <NavBar items={navItems} className="sm:pt-0" />
+      </header>
+    );
+  }
+
+  const logoSrc = resolvedTheme === 'dark' 
+    ? "/Maslow, Complete Logo (White).png" 
+    : "/Maslow, Complete Logo (Black).png";
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        <div className="mr-4 flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold">Maslow AI</span>
-          </Link>
+    <header className="fixed top-0 z-50 w-full">
+      <div className="container flex h-16 items-center justify-between">
+        <Link href="/" className="flex items-center space-x-2 z-50">
+          <div className="relative h-8 w-[160px]">
+            <Image
+              src={logoSrc}
+              alt="Maslow AI"
+              fill
+              className="object-contain transition-opacity duration-300"
+              priority
+              sizes="160px"
+            />
+          </div>
+        </Link>
+        <div className="flex items-center space-x-4">
+          <ThemeToggle />
         </div>
-        <nav className="flex items-center space-x-6 text-sm font-medium">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "transition-colors hover:text-foreground/80",
-                pathname === item.href
-                  ? "text-foreground"
-                  : "text-foreground/60"
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
       </div>
+      <NavBar items={navItems} className="sm:pt-0" />
     </header>
   );
 } 

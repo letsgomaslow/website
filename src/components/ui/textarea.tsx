@@ -1,22 +1,47 @@
+"use client"
+
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils/shared"
 
-import { cn } from "@/lib/utils"
+const textareaVariants = cva(
+  "flex min-h-[80px] w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "border-input focus-visible:ring-brand-pink",
+        outline: "border-2 border-brand-blue/20 focus-visible:border-brand-blue focus-visible:ring-brand-blue/50",
+        ghost: "border-none bg-muted/50 hover:bg-muted focus-visible:ring-brand-blue/50",
+        error: "border-red-500 focus-visible:ring-red-500",
+      },
+      size: {
+        default: "min-h-[80px]",
+        sm: "min-h-[60px] px-2 text-xs",
+        lg: "min-h-[120px] px-4 text-base",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
 
-const Textarea = React.forwardRef<
-  HTMLTextAreaElement,
-  React.ComponentProps<"textarea">
->(({ className, ...props }, ref) => {
-  return (
-    <textarea
-      className={cn(
-        "flex min-h-[80px] w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-base ring-offset-white placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:border-neutral-800 dark:bg-neutral-950 dark:ring-offset-neutral-950 dark:placeholder:text-neutral-400 dark:focus-visible:ring-neutral-300",
-        className
-      )}
-      ref={ref}
-      {...props}
-    />
-  )
-})
+export interface TextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    VariantProps<typeof textareaVariants> {}
+
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, variant, size, ...props }, ref) => {
+    return (
+      <textarea
+        className={cn(textareaVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
 Textarea.displayName = "Textarea"
 
-export { Textarea }
+export { Textarea, textareaVariants }

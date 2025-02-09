@@ -42,7 +42,7 @@ export function GenerativeAIStrategySection() {
       <div className="mx-auto max-w-[58rem] text-center">
         <h1 className="font-heading text-4xl font-bold leading-[1.1] sm:text-5xl md:text-6xl">
           Generative AI{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#EE7BB3] to-[#6DC4AD] bg-clip-text text-transparent">
             Strategy & Architecture
           </span>
         </h1>

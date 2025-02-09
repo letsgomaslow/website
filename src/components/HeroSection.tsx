@@ -1,47 +1,76 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, MessageCircle } from "lucide-react";
+// import { renderCanvas } from "@/components/ui/canvas";
+import { Button } from "@/components/ui/button";
+import { MagneticButton } from "@/components/ui/magnetic-button";
 
 export function HeroSection() {
+  // useEffect(() => {
+  //   renderCanvas();
+  // }, []);
+
   return (
-    <section className="relative overflow-hidden bg-background pt-16 md:pt-20 xl:pt-24">
-      <div className="container relative z-10">
-        <div className="mx-auto max-w-[64rem] text-center">
-          <h1 className="font-heading text-4xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl lg:leading-[1.2]">
-            All You Need is Attention—Transform Your Enterprise with{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-              Generative AI Solutions
-            </span>
-          </h1>
-          <h2 className="mt-4 text-xl text-muted-foreground md:text-2xl">
-            Empowering Enterprises with Ethical, Scalable, and Impactful AI Transformation.
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground md:text-xl">
-            At Maslow AI, we guide enterprises through every stage of their AI transformation journey. Whether you're exploring generative AI for the first time or enhancing existing systems, our tailored strategies, open‑source innovations, and ethical frameworks ensure you unlock the full potential of AI—securely and responsibly.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link
-              href="/contact"
-              className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Start Your AI Journey
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-            <Link
-              href="/chat"
-              className="inline-flex h-11 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Talk to Our Virtual Sales Assistant
-              <MessageCircle className="ml-2 h-4 w-4" />
-            </Link>
+    <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center">
+      <div className="absolute inset-0 bg-gradient-to-b from-background to-background/50 pointer-events-none" />
+      
+      <div className="container relative py-layout-2xl">
+        <div className="mx-auto max-w-[90rem] animate-fadeIn animation-delay-200">
+          <div className="flex flex-col items-center gap-layout-2xl">
+            {/* Two-part headline */}
+            <div className="flex flex-col gap-component-lg text-center">
+              <h1 className="flex flex-col gap-2 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
+                <span className="text-foreground">
+                  All You Need is Attention—
+                </span>
+                <span className="bg-gradient-to-r from-brand-pink to-brand-green bg-clip-text text-transparent">
+                  Transform Your Enterprise with Generative AI Solutions
+                </span>
+              </h1>
+              
+              <h2 className="text-xl sm:text-2xl md:text-3xl text-muted-foreground font-medium">
+                Empowering Enterprises with Ethical, Scalable, and Impactful AI Transformation
+              </h2>
+            </div>
+
+            {/* Description */}
+            <p className="max-w-3xl text-center text-lg text-muted-foreground/80">
+              At Maslow AI, we guide enterprises through every stage of their AI transformation journey. Whether you're exploring generative AI for the first time or enhancing existing systems, our tailored strategies, open‑source innovations, and ethical frameworks ensure you unlock the full potential of AI—securely and responsibly.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center">
+              <MagneticButton className="w-full sm:w-auto">
+                <Link href="/contact" className="w-full sm:w-auto">
+                  <Button 
+                    variant="gradient" 
+                    size="lg"
+                    className="w-full sm:w-auto text-base sm:text-lg font-semibold"
+                  >
+                    Start Your AI Journey
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+              </MagneticButton>
+              
+              <MagneticButton className="w-full sm:w-auto">
+                <Link href="/chat" className="w-full sm:w-auto">
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="w-full sm:w-auto text-base sm:text-lg font-semibold"
+                  >
+                    Talk to Our Virtual Sales Assistant
+                    <MessageCircle className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+              </MagneticButton>
+            </div>
           </div>
         </div>
       </div>
-      <div
-        className="absolute left-1/2 top-1/2 -z-10 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-tr from-blue-600/20 to-violet-600/20 blur-3xl"
-        aria-hidden="true"
-      />
     </section>
   );
 } 
