@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { ThemeAwareToast } from "@/components/theme/ThemeAwareToast";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { VoiceChatProvider } from "@/components/chat/VoiceChatProvider";
 
 export const metadata: Metadata = {
   title: "Maslow AI - Enterprise AI Solutions",
@@ -32,6 +33,7 @@ export default function RootLayout({
                 <Header />
                 <main className="container py-12">{children}</main>
                 <Footer />
+                <VoiceChatProvider />
               </div>
               <ThemeAwareToast />
             </TRPCReactProvider>
