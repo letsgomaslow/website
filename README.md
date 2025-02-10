@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚀 Next.js Modern Stack Template
 
 A Next.js template that combines commonly used tools and libraries for building full-stack web applications. This stack is specifically designed to be optimized for AI coding assistants like Cursor.
@@ -129,3 +130,7 @@ npx prisma migrate deploy                  # Deploy migrations to production
 ## 📝 License
 
 MIT License
+=======
+# website
+Maslow Website Repo
+>>>>>>> 05915662b0232e5feb40a16b838982fecc54c5d9
