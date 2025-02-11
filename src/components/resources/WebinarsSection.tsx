@@ -93,25 +93,25 @@ const webinars = [
 ];
 
 export function WebinarsSection() {
+  const handleJoinWebinar = (link: string) => {
+    window.location.href = link;
+  };
   return (
-    <section className="section" id="webinars">
-      <h2 className="text-[#0073e6] text-2xl mb-4">Webinars & Workshops</h2>
-      <div className="resources-grid flex flex-wrap gap-5">
-        {webinars.map((webinar, index) => (
-          <div key={index} className="resource-card flex-1 min-w-[300px] p-5 bg-[#fafafa] border rounded-md text-center">
-            <img 
-              src="https://via.placeholder.com/300x200?text=Webinar" 
-              alt="Webinar" 
-              className="max-w-full h-auto rounded-md mb-4"
-            />
-            <h3 className="font-bold mb-2">{webinar.title}</h3>
-            <p className="mb-4">{webinar.description}</p>
-            <a 
-              href={webinar.link} 
-              className="inline-block bg-[#ff9900] text-white px-4 py-2 rounded-md font-bold"
-            >
+    <section className="my-5 p-5 bg-white rounded-lg shadow-sm" id="webinars">
+    <h2 className="text-[#0073e6] text-2xl font-bold mb-5">Webinars & Workshops</h2>
+    <div className="flex flex-wrap gap-5">
+      {webinars.map((webinar, index) => (
+        <div key={index} className="flex-1 basis-[300px] bg-white border border-[#ddd] rounded-lg overflow-hidden text-center">
+          <div className="p-5">
+            <img src="/api/placeholder/300/200" alt="Webinar" className="w-full h-auto rounded-lg mb-4"/>
+            <h3 className="text-xl font-bold mb-3 text-[#333]">{webinar.title}</h3>
+            <p className="text-[#666] mb-4">{webinar.description}</p>
+            <button 
+              onClick={() => handleJoinWebinar(webinar.link)}
+              className="inline-block bg-[#ff9900] text-white px-6 py-2 rounded-md font-bold hover:bg-[#e68a00] transition-colors cursor-pointer">
               Join Our Webinar
-            </a>
+            </button>
+          </div>
           </div>
         ))}
       </div>

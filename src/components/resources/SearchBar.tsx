@@ -38,16 +38,31 @@
 // } 
 
 
-import React from "react";
 
-export function SearchBar() {
+import React, { useRef } from "react";
+
+export function SearchBar({ onSearch }: { onSearch: (keyword: string) => void }) {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onSearch(event.target.value); // Pass the typed keyword to the parent
+  };
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleClick = () => {
+    inputRef.current?.focus();
+  };
+
+
   return (
-    <div className="search-filter my-5 text-center">
-      <input 
-        type="text" 
-        placeholder="Search by topic, industry, or solution type..." 
+    <div className="search-filter my-5 text-center" onClick={handleClick}>
+      <input
+        ref={inputRef}
+        type="text"
+        placeholder="Search by topic, industry, or solution type..."
         className="w-full max-w-[400px] p-3 border rounded-md"
+        onChange={handleInputChange}
       />
     </div>
   );
 }
+

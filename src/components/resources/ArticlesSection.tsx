@@ -1,5 +1,3 @@
-"use client";
-
 // import Link from "next/link";
 // import { ArrowRight } from "lucide-react";
 
@@ -62,39 +60,54 @@
 // } 
 
 
+
+"use client";
+import { blogPosts } from "@/utils/blogposts";
 import React from "react";
+import { useRouter } from "next/navigation";
 
+// const blogPosts = [
+//   {
+//     title: "The Future of Enterprise AI",
+//     description: "Explore insights and trends shaping the future of AI in enterprise.",
+//     link: "/blogs/future-of-enterprise-ai"
+//   }
+// ];
 
+export function ArticlesSection({ blogPosts }: { blogPosts: Array<any> }) {
+  const router = useRouter();
 
+  console.log('ArticlesSection - Received blogPosts:', blogPosts?.length);
 
-const blogPosts = [
-  {
-    title: "The Future of Enterprise AI",
-    description: "Explore insights and trends shaping the future of AI in enterprise.",
-    link: "/blogs/future-of-enterprise-ai"
-  }
-];
+  const handleLearnMore = (postId: string) => {
+    console.log('ArticlesSection - Navigate to:', postId); 
+    router.push(`/resources/${postId}`);
+  };
 
-export function ArticlesSection() {
   return (
-    <section className="section" id="blogs">
-      <h2 className="text-[#0073e6] text-2xl mb-4">Blogs</h2>
-      <div className="resources-grid flex flex-wrap gap-5">
+    <section className="my-5 p-5 bg-white rounded-lg shadow-sm" id="blogs">
+      {/* <h2 className="text-[#0073e6] text-2xl font-bold mb-5">Blogs</h2> */}
+      <div className="flex flex-wrap gap-5">
         {blogPosts.map((post, index) => (
-          <div key={index} className="resource-card flex-1 min-w-[300px] p-5 bg-[#fafafa] border rounded-md text-center">
-            <img 
-              src="https://via.placeholder.com/300x200?text=Blog+Image" 
-              alt="Blog Post" 
-              className="max-w-full h-auto rounded-md mb-4"
-            />
-            <h3 className="font-bold mb-2">{post.title}</h3>
-            <p className="mb-4">{post.description}</p>
-            <a 
-              href={post.link} 
-              className="inline-block bg-[#ff9900] text-white px-4 py-2 rounded-md font-bold"
-            >
-              Learn More
-            </a>
+          <div 
+            key={index} 
+            className="flex-1 basis-[300px] bg-white border border-[#ddd] rounded-lg overflow-hidden text-center"
+          >
+            <div className="p-5">
+              <img 
+                src={post.thumbnail} 
+                alt="Blog Post" 
+                className="w-full h-auto rounded-lg mb-4"
+              />
+              <h3 className="text-xl font-bold mb-3 text-[#333]">{post.title}</h3>
+              <p className="text-[#666] mb-4">{post.description}</p>
+              <button 
+                onClick={() => handleLearnMore(post.id)}
+                className="inline-block bg-[#ff9900] text-white px-6 py-2 rounded-md font-bold hover:bg-[#e68a00] transition-colors cursor-pointer"
+              >
+                Learn More
+              </button>
+            </div>
           </div>
         ))}
       </div>
