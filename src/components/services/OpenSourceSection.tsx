@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, Code, Lock, Settings } from "lucide-react";
+import { motion } from "framer-motion";
 
 const benefits = [
   {
@@ -34,6 +35,13 @@ const industries = [
 
 export function OpenSourceSection() {
   return (
+    <motion.section 
+      className="container py-24"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      // variants={sectionVariants}
+    >
     <section className="container py-24">
       <div className="mx-auto max-w-[58rem] text-center">
         <h2 className="font-heading text-3xl font-bold leading-[1.1] sm:text-4xl md:text-5xl">
@@ -96,5 +104,6 @@ export function OpenSourceSection() {
         </Link>
       </div>
     </section>
+    </motion.section>
   );
 } 

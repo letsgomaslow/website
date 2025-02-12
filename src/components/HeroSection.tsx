@@ -9,6 +9,7 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 
+
 export function HeroSection() {
   // useEffect(() => {
   //   renderCanvas();

@@ -48,7 +48,7 @@ export function Header() {
     : "/Maslow, Complete Logo (Black).png";
 
   return (
-    <header className="fixed top-0 z-50 w-full">
+    <header className="fixed top-0 z-50 w-full backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2 z-50">
           <div className="relative h-8 w-[160px]">
@@ -65,8 +65,8 @@ export function Header() {
         <div className="flex items-center space-x-4">
           <ThemeToggle />
         </div>
+        <NavBar items={navItems} className="sm:pt-2" />
       </div>
-      <NavBar items={navItems} className="sm:pt-0" />
     </header>
   );
 } 

@@ -37,17 +37,16 @@
 //   );
 // } 
 
-
-
-
 "use client";
 
 import { motion } from "framer-motion";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 export function SearchBar({ onSearch }: { onSearch: (keyword: string) => void }) {
+  const [value , setValue] = useState('')
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onSearch(event.target.value); // Pass the typed keyword to the parent
+    onSearch(event.target.value); 
+    setValue(event.target.value)
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -65,16 +64,16 @@ export function SearchBar({ onSearch }: { onSearch: (keyword: string) => void })
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-    <div className="search-filter my-5 text-center" onClick={handleClick}>
+   <div className="search-filter my-5 text-center" onClick={handleClick}> 
       <input
         ref={inputRef}
         type="text"
         placeholder="Search by topic, industry, or solution type..."
         className="w-full max-w-[400px] p-3 border rounded-md"
         onChange={handleInputChange}
+        value={value}
       />
-    </div>
+   </div> 
     </motion.div>
   );
 }
-
