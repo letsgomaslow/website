@@ -61,56 +61,82 @@
 
 
 
+
 "use client";
-import { blogPosts } from "@/utils/blogposts";
+
 import React from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
-// const blogPosts = [
-//   {
-//     title: "The Future of Enterprise AI",
-//     description: "Explore insights and trends shaping the future of AI in enterprise.",
-//     link: "/blogs/future-of-enterprise-ai"
-//   }
-// ];
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.3
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
 
 export function ArticlesSection({ blogPosts }: { blogPosts: Array<any> }) {
   const router = useRouter();
 
-  console.log('ArticlesSection - Received blogPosts:', blogPosts?.length);
-
   const handleLearnMore = (postId: string) => {
-    console.log('ArticlesSection - Navigate to:', postId); 
     router.push(`/resources/${postId}`);
   };
 
   return (
-    <section className="my-5 p-5 bg-white rounded-lg shadow-sm" id="blogs">
-      {/* <h2 className="text-[#0073e6] text-2xl font-bold mb-5">Blogs</h2> */}
-      <div className="flex flex-wrap gap-5">
+    <motion.section 
+      className="my-5 p-5 bg-white rounded-lg shadow-sm"
+      id="blogs"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div 
+        className="flex flex-wrap gap-5"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
         {blogPosts.map((post, index) => (
-          <div 
-            key={index} 
-            className="flex-1 basis-[300px] bg-white border border-[#ddd] rounded-lg overflow-hidden text-center"
+          <motion.div
+            key={index}
+            className="flex-1 basis-[300px] bg-white border border-[#ddd] rounded-lg overflow-hidden text-center group"
+            variants={item}
+            whileHover={{ 
+              scale: 1.02,
+              transition: { duration: 0.2 }
+            }}
           >
             <div className="p-5">
-              <img 
-                src={post.thumbnail} 
-                alt="Blog Post" 
+              <motion.img
+                src={post.thumbnail}
+                alt="Blog Post"
                 className="w-full h-auto rounded-lg mb-4"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
               />
               <h3 className="text-xl font-bold mb-3 text-[#333]">{post.title}</h3>
               <p className="text-[#666] mb-4">{post.description}</p>
-              <button 
+              <motion.button
                 onClick={() => handleLearnMore(post.id)}
                 className="inline-block bg-[#ff9900] text-white px-6 py-2 rounded-md font-bold hover:bg-[#e68a00] transition-colors cursor-pointer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Learn More
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 }

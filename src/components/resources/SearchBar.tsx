@@ -39,6 +39,10 @@
 
 
 
+
+"use client";
+
+import { motion } from "framer-motion";
 import React, { useRef } from "react";
 
 export function SearchBar({ onSearch }: { onSearch: (keyword: string) => void }) {
@@ -54,6 +58,13 @@ export function SearchBar({ onSearch }: { onSearch: (keyword: string) => void })
 
 
   return (
+    <motion.div 
+      className="search-filter my-5 text-center"
+      onClick={handleClick}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
     <div className="search-filter my-5 text-center" onClick={handleClick}>
       <input
         ref={inputRef}
@@ -63,6 +74,7 @@ export function SearchBar({ onSearch }: { onSearch: (keyword: string) => void })
         onChange={handleInputChange}
       />
     </div>
+    </motion.div>
   );
 }
 
