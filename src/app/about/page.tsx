@@ -3,6 +3,7 @@ import { WhoWeAreSection } from "@/components/about/WhoWeAreSection";
 import { OurApproachSection } from "@/components/about/OurApproachSection";
 import { TeamSection } from "@/components/about/TeamSection";
 import { JourneySection } from "@/components/about/JourneySection";
+import { OurCommitmentSection } from "@/components/about/OurCommitmentSection";
 
 export default function AboutPage() {
   return (
@@ -11,6 +12,7 @@ export default function AboutPage() {
       <OurApproachSection />
       <TeamSection />
       <JourneySection />
+      <OurCommitmentSection />
     </div>
   );
 } 
