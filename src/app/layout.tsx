@@ -40,7 +40,7 @@ export default function RootLayout({
                 <Header />
                 <main className="container py-12 pt-32">{children}</main>
                 <Footer />
-                <VoiceChatProvider />
+                {/* <VoiceChatProvider /> */}
               </div>
               <ThemeAwareToast />
             </TRPCReactProvider>
