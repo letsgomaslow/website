@@ -26,9 +26,9 @@ export default function ResourcesPage() {
   const [blogs, updateBlogPosts] = useState(blogPosts);
 
   const updateFilter = (keyword: string) => {
-    const filteredPosts = blogPosts.filter((post) => {
+    const filteredPosts = keyword !== "" ? blogPosts.filter((post) => {
       return post.title.toLowerCase().includes(keyword.toLowerCase());
-    });
+    }) : blogPosts;
     updateBlogPosts(filteredPosts);
   };
 
