@@ -4,19 +4,14 @@ import { User } from "lucide-react";
 
 const teamMembers = [
   {
-    name: "Dr. Sarah Chen",
-    role: "Chief Executive Officer",
-    bio: "With over 15 years of experience in AI and enterprise transformation, Dr. Chen leads Maslow AI's mission to democratize artificial intelligence.",
+    name: "Rakesh David",
+    role: "Founder & CEO",
+    bio: "A visionary leader with over 15 years of experience in driving enterprise transformation through AI.",
   },
   {
-    name: "Michael Rodriguez",
-    role: "Chief Technology Officer",
-    bio: "A pioneer in open-source AI development, Michael drives our technical strategy and innovation initiatives.",
-  },
-  {
-    name: "Dr. Emma Thompson",
-    role: "Head of AI Ethics",
-    bio: "Leading our ethical AI initiatives, Dr. Thompson ensures our solutions meet the highest standards of responsibility and fairness.",
+    name: "Chan Chawla",
+    role: "Chief Opearting Officer",
+    bio: "The architect behind scalable, secure AI systems that empower enterprises to achieve measurable outcomes.",
   },
 ];
 
@@ -32,11 +27,11 @@ export function TeamSection() {
         </h2>
       </div>
 
-      <div className="mx-auto mt-16 grid justify-center gap-8 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
+      <div className="mx-auto mt-16 grid justify-center gap-8 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-2 md:justify-center">
         {teamMembers.map((member) => (
           <div
             key={member.name}
-            className="relative overflow-hidden rounded-lg border bg-background p-2"
+            className="relative overflow-hidden rounded-lg border bg-background p-2 justify-self-center"
           >
             <div className="flex h-full flex-col items-center justify-between rounded-md p-6">
               <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted">
