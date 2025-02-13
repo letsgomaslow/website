@@ -5,17 +5,17 @@ import { Lightbulb, Code, ShieldCheck } from "lucide-react";
 const approaches = [
   {
     title: "Innovation First",
-    description: "We stay at the forefront of AI technology, constantly exploring new possibilities to deliver cutting-edge solutions.",
+    description: "Leveraging generative AI to solve complex challenges creatively.",
     icon: Lightbulb,
   },
   {
     title: "Open‑Source Focus",
-    description: "We leverage and contribute to open-source technologies, ensuring transparency and flexibility in our solutions.",
+    description: "Empowering enterprises with flexible, transparent, and cost-effective AI solutions.",
     icon: Code,
   },
   {
     title: "Ethical Governance (via TRiSM)",
-    description: "Our TRiSM framework ensures all AI solutions meet the highest standards of trust, risk management, and security.",
+    description: "Prioritizing trust, security, and compliance through our TRiSM framework.",
     icon: ShieldCheck,
   },
 ];
