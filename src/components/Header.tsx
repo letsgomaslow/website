@@ -44,12 +44,12 @@ export function Header() {
   }
 
   const logoSrc = resolvedTheme === 'dark' 
-    ? "/Maslow, Complete Logo (White).png" 
-    : "/Maslow, Complete Logo (Black).png";
+    ? "/Maslow-white.png" 
+    : "/Maslow-black.png";
 
   return (
-    <header className="fixed top-0 z-50 w-full">
-      <div className="container flex h-16 items-center justify-between">
+    <header className="fixed top-0 z-50 w-full backdrop-blur-md">
+      <div className="container flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2 z-50">
           <div className="relative h-8 w-[160px]">
             <Image
@@ -65,8 +65,9 @@ export function Header() {
         <div className="flex items-center space-x-4">
           <ThemeToggle />
         </div>
+        <NavBar items={navItems} className="sm:pt-2 flex flex-wrap gap-4 whitespace-nowrap" />
+        {/* <NavBar items={navItems} className="flex flex-wrap gap-4 whitespace-nowrap text-sm md:text-base" /> */}
       </div>
-      <NavBar items={navItems} className="sm:pt-0" />
     </header>
   );
 } 
