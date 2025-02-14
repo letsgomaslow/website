@@ -61,7 +61,7 @@ export function GartnerInsightsSection() {
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
               Gartner Insights:{" "}
-              <span className="bg-gradient-to-r from-brand-pink to-brand-purple bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-brand-pink to-brand-green bg-clip-text text-transparent">
                 The AI Reality
               </span>
             </h2>
