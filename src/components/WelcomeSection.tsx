@@ -37,7 +37,7 @@ export function WelcomeSection() {
           >
             <div className="absolute inset-0 bg-gradient-to-tr from-brand-pink/20 to-brand-green/20" />
             <Image
-              src="/images/welcome/hero-image.jpg"
+              src="/images/welcome/hero-image2.jpg"
               alt="AI Innovation"
               fill
               className="object-cover"
