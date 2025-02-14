@@ -10,21 +10,21 @@ const differentiators = [
     description: "Bespoke AI strategies that blend cutting-edge generative technology with enterprise wisdom.",
     icon: Sparkles,
     gradient: "from-brand-pink to-brand-purple",
-    image: "/images/value-prop/generative-ai.jpg"
+    image: "/images/welcome/Generative_Brilliance.jpg"
   },
   {
     title: "Open‑Source Ingenuity",
     description: "Flexible, cost-effective solutions that grant you control, transparency, and agility.",
     icon: Code2,
     gradient: "from-brand-green to-brand-blue",
-    image: "/images/value-prop/open-source.jpg"
+    image: "/images/welcome/Open_Source_Ingenuity.jpg"
   },
   {
     title: "TRiSM Assurance",
     description: "Our TRiSM framework ensures your AI systems are secure, compliant, and reliable.",
     icon: ShieldCheck,
     gradient: "from-brand-blue to-brand-pink",
-    image: "/images/value-prop/trism.jpg"
+    image: "/images/welcome/Trism_Assurance.jpg"
   }
 ];
 
@@ -68,7 +68,7 @@ export function ValuePropositionSection() {
               variants={item}
             >
               Our Value{" "}
-              <span className="bg-gradient-to-r from-brand-pink to-brand-purple bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r  from-brand-pink to-brand-green bg-clip-text text-transparent">
                 Proposition
               </span>
             </motion.h2>
