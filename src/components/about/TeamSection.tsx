@@ -1,17 +1,17 @@
 "use client";
 
-import { User } from "lucide-react";
-
 const teamMembers = [
   {
     name: "Rakesh David",
     role: "Founder & CEO",
     bio: "A visionary leader with over 15 years of experience in driving enterprise transformation through AI.",
+    imageUrl: "https://maslow.ai/wp-content/uploads/elementor/thumbs/Rakesh-qiw1ahlm3uey4fty975j8qdtaandb3ob8mpyjsu3yg.jpg"
   },
   {
     name: "Chan Chawla",
-    role: "Chief Opearting Officer",
+    role: "Chief Operating Officer",
     bio: "The architect behind scalable, secure AI systems that empower enterprises to achieve measurable outcomes.",
+    imageUrl: "https://maslow.ai/wp-content/uploads/elementor/thumbs/Chan-qiw1ahlm3uey4fty975j8qdtaandb3ob8mpyjsu3yg.jpg"
   },
 ];
 
@@ -34,8 +34,12 @@ export function TeamSection() {
             className="relative overflow-hidden rounded-lg border bg-background p-2 justify-self-center"
           >
             <div className="flex h-full flex-col items-center justify-between rounded-md p-6">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted">
-                <User className="h-12 w-12 text-muted-foreground" />
+              <div className="h-24 w-24 rounded-full overflow-hidden bg-muted">
+                <img
+                  src={member.imageUrl}
+                  alt={member.name}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div className="mt-6 text-center">
                 <h3 className="font-bold">{member.name}</h3>
