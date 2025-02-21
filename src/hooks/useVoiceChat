@@ -1,142 +1,5 @@
-// import { useState, useRef, useEffect, useCallback } from 'react';
-
-
-// const OPENAI_API_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
-
-// export function useVoiceChat() {
-//     const [isListening, setIsListening] = useState(false);
-//     const [transcript, setTranscript] = useState('');
-//     const [response, setResponse] = useState('');
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState('');
-  
-//     const recognition = useRef(null);
-  
-//     const stopListening = useCallback(() => {
-//       if (recognition.current) {
-//         recognition.current.stop();
-//         setIsListening(false);
-//       }
-//     }, []);
-  
-//     const handleVoiceCommand = useCallback(async () => {
-//       if (!transcript) return;
-//       setLoading(true);
-//       stopListening();
-  
-//       try {
-//         const response = await fetch('https://api.openai.com/v1/chat/completions', {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': `Bearer ${OPENAI_API_KEY}`
-//           },
-//           body: JSON.stringify({
-//             model: "gpt-4-turbo-preview",
-//             messages: [{
-//               role: "user",
-//               content: transcript
-//             }],
-//             temperature: 0.7,
-//             max_tokens: 150
-//           })
-//         });
-  
-//         const data = await response.json();
-        
-//         if (data.choices && data.choices[0]) {
-//           const aiResponse = data.choices[0].message.content;
-//           setResponse(aiResponse);
-//         } else {
-//           throw new Error('Invalid response from OpenAI');
-//         }
-//       } catch (err) {
-//         const errorMessage = err instanceof Error ? err.message : 'Error processing voice command';
-//         console.error('Error:', err);
-//         setError(errorMessage);
-//       } finally {
-//         setLoading(false);
-//         setTranscript('');
-//       }
-//     }, [transcript]);
-  
-//     const initializeSpeechRecognition = useCallback(() => {
-//       if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-//         recognition.current = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-//         recognition.current.continuous = false;
-//         recognition.current.interimResults = false;
-  
-//         recognition.current.onresult = (event) => {
-//           const transcript = event.results[0][0].transcript;
-//           setTranscript(transcript);
-//         };
-  
-//         recognition.current.onerror = (event) => {
-//           setError('Error with speech recognition: ' + event.error);
-//           setIsListening(false);
-//         };
-  
-//         recognition.current.onend = () => {
-//           setIsListening(false);
-//         };
-//       } else {
-//         setError('Speech recognition is not supported in this browser.');
-//       }
-//     }, []);
-  
-//     const startListening = useCallback(() => {
-//       setError('');
-//       if (recognition.current) {
-//         recognition.current.start();
-//         setIsListening(true);
-//       }
-//     }, []);
-  
-//     useEffect(() => {
-//       initializeSpeechRecognition();
-//     }, [initializeSpeechRecognition]);
-  
-//     useEffect(() => {
-//       if (transcript && !loading) {
-//         handleVoiceCommand();
-//       }
-//     }, [transcript, loading, handleVoiceCommand]);
-  
-//     useEffect(() => {
-//       return () => {
-//         stopListening();
-//       };
-//     }, [stopListening]);
-  
-//     return {
-//       isListening,
-//       loading,
-//       transcript,
-//       response,
-//       error,
-//       startListening,
-//       stopListening
-//     };
-//   }
-
-
-
 import { useState, useRef, useEffect, useCallback } from 'react';
-
-const teamMembers = [
-  {
-    name: "Rakesh David",
-    role: "Founder & CEO",
-    bio: "A visionary leader with over 15 years of experience in driving enterprise transformation through AI.",
-    imageUrl: "https://maslow.ai/wp-content/uploads/elementor/thumbs/Rakesh-qiw1ahlm3uey4fty975j8qdtaandb3ob8mpyjsu3yg.jpg"
-  },
-  {
-    name: "Chan Chawla",
-    role: "Chief Operating Officer",
-    bio: "The architect behind scalable, secure AI systems that empower enterprises to achieve measurable outcomes.",
-    imageUrl: "https://maslow.ai/wp-content/uploads/elementor/thumbs/Chan-qiw1ahlm3uey4fty975j8qdtaandb3ob8mpyjsu3yg.jpg"
-  },
-];
+import { TeamMember, teamMembers } from '@/DataModels/TeamDataModel';
 
 export function useVoiceChat() {
   const [isListening, setIsListening] = useState(false);
@@ -144,120 +7,190 @@ export function useVoiceChat() {
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showTeamModal, setShowTeamModal] = useState(false);
+  const [contentType, setContentType] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [isWaitingForTrigger, setIsWaitingForTrigger] = useState(false);
   
   const recognition = useRef(null);
+  const commandTimeout = useRef(null);
 
-  // Define stopListening first
+  const initializeSpeechRecognition = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    if (!('webkitSpeechRecognition' in window)) {
+      setError('Speech recognition is not supported in this browser.');
+      return;
+    }
+
+    const SpeechRecognition = window.webkitSpeechRecognition;
+    recognition.current = new SpeechRecognition();
+    recognition.current.continuous = true;
+    recognition.current.interimResults = true;
+
+    recognition.current.onstart = () => {
+      setIsListening(true);
+      setIsWaitingForTrigger(true);
+      console.log('Speech recognition started - waiting for trigger word');
+    };
+
+    recognition.current.onresult = (event) => {
+      const lastResult = event.results[event.results.length - 1];
+      const transcript = lastResult[0].transcript.toLowerCase().trim();
+      
+      // Clear any existing timeout
+      if (commandTimeout.current) {
+        clearTimeout(commandTimeout.current);
+      }
+
+      if (isWaitingForTrigger) {
+        if (transcript.includes('hey maslow') || transcript.includes('hi maslow')) {
+          console.log('Trigger word detected');
+          setIsWaitingForTrigger(false);
+          setTranscript('');
+          // Optional: Play a subtle sound to indicate activation
+        }
+      } else {
+        setTranscript(transcript);
+        
+        // If this is a final result, process after a short delay
+        if (lastResult.isFinal) {
+          commandTimeout.current = setTimeout(() => {
+            handleVoiceCommand(transcript);
+            setIsWaitingForTrigger(true); // Reset to waiting for trigger
+          }, 1000);
+        }
+      }
+    };
+
+    recognition.current.onend = () => {
+      console.log('Speech recognition ended');
+      if (isListening && !loading) {
+        recognition.current.start();
+      } else {
+        setIsListening(false);
+      }
+    };
+
+    recognition.current.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      if (event.error !== 'no-speech') {
+        setError(`Error: ${event.error}`);
+        setIsListening(false);
+      }
+    };
+  }, [isWaitingForTrigger, loading, isListening]);
+
+  const startListening = useCallback(() => {
+    try {
+      if (!recognition.current) {
+        initializeSpeechRecognition();
+      }
+      setError('');
+      setIsWaitingForTrigger(true);
+      recognition.current.start();
+    } catch (err) {
+      console.error('Error starting speech recognition:', err);
+      setError('Failed to start speech recognition');
+    }
+  }, [initializeSpeechRecognition]);
+
   const stopListening = useCallback(() => {
     if (recognition.current) {
       recognition.current.stop();
       setIsListening(false);
-    }
-  }, []);
-
-  // Initialize speech recognition
-  const initializeSpeechRecognition = useCallback(() => {
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition.current = new SpeechRecognition();
-      recognition.current.continuous = false;
-      recognition.current.interimResults = false;
-
-      recognition.current.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setTranscript(transcript);
-      };
-
-      recognition.current.onerror = (event) => {
-        setError('Error with speech recognition: ' + event.error);
-        setIsListening(false);
-      };
-
-      recognition.current.onend = () => {
-        setIsListening(false);
-      };
-    } else {
-      setError('Speech recognition is not supported in this browser.');
-    }
-  }, []);
-
-  const startListening = useCallback(() => {
-    setError('');
-    if (recognition.current) {
-      recognition.current.start();
-      setIsListening(true);
-    }
-  }, []);
-
-  const handleVoiceCommand = useCallback(async () => {
-    if (!transcript) return;
-    setLoading(true);
-    stopListening();
-
-    // Check if the command is about showing team information
-    const teamRelatedTerms = ['team', 'members', 'people', 'staff', 'employees'];
-    const isTeamRequest = teamRelatedTerms.some(term => 
-      transcript.toLowerCase().includes(term)
-    );
-
-    if (isTeamRequest) {
-    //   setResponse("Here's our team information:");
-      setShowTeamModal(true);
-      setLoading(false);
-      setTranscript('');
-      return;
-    }
-
-    try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4-turbo-preview",
-          messages: [{
-            role: "user",
-            content: transcript
-          }],
-          temperature: 0.7,
-          max_tokens: 150
-        })
-      });
-
-      const data = await response.json();
-      
-      if (data.choices && data.choices[0]) {
-        setResponse(data.choices[0].message.content);
-      } else {
-        throw new Error('Invalid response from OpenAI');
+      setIsWaitingForTrigger(false);
+      if (commandTimeout.current) {
+        clearTimeout(commandTimeout.current);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error processing voice command';
-      console.error('Error:', err);
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-      setTranscript('');
     }
-  }, [transcript, stopListening]);
+  }, []);
 
-  // Initialize speech recognition on mount
   useEffect(() => {
     initializeSpeechRecognition();
     return () => {
-      stopListening();
+      if (recognition.current) {
+        recognition.current.stop();
+      }
+      if (commandTimeout.current) {
+        clearTimeout(commandTimeout.current);
+      }
     };
-  }, [initializeSpeechRecognition, stopListening]);
+  }, [initializeSpeechRecognition]);
 
-  // Handle voice command when transcript changes
-  useEffect(() => {
-    if (transcript && !loading) {
-      handleVoiceCommand();
+  const handleVoiceCommand = useCallback(async (text) => {
+    if (!text) return;
+    setLoading(true);
+    console.log('Processing command:', text);
+  
+    // Check for command patterns
+    const commandPatterns = {
+      team: /team|members|employees|staff|who.*work|people.*company/i,
+      company: /company|business|organization|about.*maslow|what.*maslow/i,
+      contact: /contact|reach|email|phone|address|location|where/i
+    };
+  
+    let matchedType = 'ai';
+    for (const [type, pattern] of Object.entries(commandPatterns)) {
+      if (pattern.test(text)) {
+        matchedType = type;
+        break;
+      }
     }
-  }, [transcript, loading, handleVoiceCommand]);
+  
+    setContentType(matchedType);
+    setShowModal(true);
+  
+    if (matchedType === 'ai') {
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "system",
+                content: `You are an AI assistant for Maslow AI, a company focused on practical AI solutions. 
+                         Provide helpful, concise responses. If you're not sure about something specific to 
+                         Maslow AI, provide general information related to the topic.`
+              },
+              {
+                role: "user",
+                content: text
+              }
+            ]
+          })
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        setResponse(data.message || 'I apologize, but I was unable to generate a response.');
+      } catch (err) {
+        console.error('API error:', err);
+        setError(`Failed to process request: ${err.message}`);
+        setResponse('I apologize, but I encountered an error while processing your request.');
+      }
+    }
+  
+    setLoading(false);
+    setTranscript('');
+    setIsWaitingForTrigger(true);
+  }, []);
+
+  useEffect(() => {
+    initializeSpeechRecognition();
+    return () => {
+      if (recognition.current) {
+        recognition.current.stop();
+      }
+    };
+  }, [initializeSpeechRecognition]);
 
   return {
     isListening,
@@ -265,10 +198,12 @@ export function useVoiceChat() {
     transcript,
     response,
     error,
-    showTeamModal,
+    showModal,
+    contentType,
     teamData: teamMembers,
     startListening,
     stopListening,
-    setShowTeamModal
+    setShowModal,
+    isWaitingForTrigger
   };
 }

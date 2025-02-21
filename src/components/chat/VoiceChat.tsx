@@ -158,11 +158,14 @@
 //   );
 // } 
 
+
+
 import { VoiceButton } from "./VoiceButton";
 import { VoiceTranscript } from "./VoiceTranscript";
 import { VoiceResponse } from "./VoiceResponse";
 import { TeamDataModal } from "./TeamDataModal";
 import { useVoiceChat } from "@/hooks/useVoiceChat";
+import { ResponseModal } from "./ResponseModal";
 
 export function VoiceChat() {
   const {
@@ -171,36 +174,47 @@ export function VoiceChat() {
     transcript,
     response,
     error,
-    showTeamModal,
+    showModal,
+    contentType,
     teamData,
     startListening,
     stopListening,
-    setShowTeamModal
+    setShowModal,
+    isWaitingForTrigger
   } = useVoiceChat();
 
   return (
     <>
-      <div className="flex flex-col items-end space-y-4">
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-4">
         {error && (
           <div className="bg-destructive/15 text-destructive px-4 py-2 rounded-lg max-w-md">
             {error}
           </div>
         )}
-        
-        <VoiceTranscript text={transcript} />
-        <VoiceResponse text={response} />
+
         <VoiceButton 
           listening={isListening}
           loading={loading}
           onClick={isListening ? stopListening : startListening}
+          waitingForTrigger={isWaitingForTrigger}
         />
       </div>
 
-      <TeamDataModal
-        isOpen={showTeamModal}
-        onClose={() => setShowTeamModal(false)}
-        teamData={teamData}
-      />
+      {contentType === 'team' ? (
+        <TeamDataModal 
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          teamData={teamData}
+          contentType={contentType}
+        />
+      ) : (
+        <ResponseModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          response={response}
+          type={contentType}
+        />
+      )}
     </>
   );
 }
