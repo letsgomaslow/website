@@ -160,61 +160,153 @@
 
 
 
-import { VoiceButton } from "./VoiceButton";
-import { VoiceTranscript } from "./VoiceTranscript";
-import { VoiceResponse } from "./VoiceResponse";
-import { TeamDataModal } from "./TeamDataModal";
-import { useVoiceChat } from "@/hooks/useVoiceChat";
-import { ResponseModal } from "./ResponseModal";
+"use client";
+
+import { useState, useEffect } from 'react';
+import { Mic, MicOff, Loader } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import VoiceAgentApp from './VoiceAgent';
 
 export function VoiceChat() {
-  const {
-    isListening,
-    loading,
-    transcript,
-    response,
-    error,
-    showModal,
-    contentType,
-    teamData,
-    startListening,
-    stopListening,
-    setShowModal,
-    isWaitingForTrigger
-  } = useVoiceChat();
+  const [isAppOpen, setIsAppOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
+  
+  // Add a local state to help with transition animations
+  const [buttonState, setButtonState] = useState({
+    isListening: false,
+    isWaiting: false
+  });
+  
+  // Sync the component state with props
+  useEffect(() => {
+    // Small delay to avoid rapid state changes during transitions
+    const timer = setTimeout(() => {
+      setButtonState({
+        isListening: isListening,
+        isWaiting: isWaiting
+      });
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [isListening, isWaiting]);
+
+  const toggleApp = () => {
+    setIsAppOpen(!isAppOpen);
+  };
+
+  // Handle button click similar to VoiceButton
+  const handleVoiceButtonClick = () => {
+    if (isLoading) return;
+    
+    if (!isAppOpen) {
+      setIsAppOpen(true);
+    } else {
+      setIsListening(!isListening);
+      if (!isListening) {
+        // Simulate waiting state when turning on listening
+        setIsWaiting(true);
+        setTimeout(() => setIsWaiting(false), 2000);
+      }
+    }
+  };
+
+  // Determine button variant to match VoiceButton component
+  const getButtonVariant = () => {
+    if (isLoading) return "outline";
+    if (buttonState.isListening) {
+      return buttonState.isWaiting ? "secondary" : "destructive";
+    }
+    return "default";
+  };
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-4">
-        {error && (
-          <div className="bg-destructive/15 text-destructive px-4 py-2 rounded-lg max-w-md">
-            {error}
-          </div>
-        )}
-
-        <VoiceButton 
-          listening={isListening}
-          loading={loading}
-          onClick={isListening ? stopListening : startListening}
-          waitingForTrigger={isWaitingForTrigger}
-        />
-      </div>
-
-      {contentType === 'team' ? (
-        <TeamDataModal 
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          teamData={teamData}
-          contentType={contentType}
-        />
+      {isAppOpen ? (
+        <div className="fixed inset-0 z-50">
+          <VoiceAgentApp onClose={() => setIsAppOpen(false)} />
+        </div>
       ) : (
-        <ResponseModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          response={response}
-          type={contentType}
-        />
+        <Button
+          size="icon"
+          variant={getButtonVariant()}
+          className={`h-12 w-12 rounded-full transition-all duration-300 ${
+            buttonState.isListening && buttonState.isWaiting ? 'animate-pulse' : ''
+          }`}
+          onClick={handleVoiceButtonClick}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Loader className="h-6 w-6 animate-spin" />
+          ) : buttonState.isListening ? (
+            <Mic className="h-6 w-6" />
+          ) : (
+            <MicOff className="h-6 w-6" />
+          )}
+        </Button>
       )}
     </>
   );
 }
+
+
+
+
+// import { VoiceButton } from "./VoiceButton";
+// import { VoiceTranscript } from "./VoiceTranscript";
+// import { VoiceResponse } from "./VoiceResponse";
+// import { TeamDataModal } from "./TeamDataModal";
+// import { useVoiceChat } from "@/hooks/useVoiceChat";
+// import { ResponseModal } from "./ResponseModal";
+
+// export function VoiceChat() {
+//   const {
+//     isListening,
+//     loading,
+//     transcript,
+//     response,
+//     error,
+//     showModal,
+//     contentType,
+//     teamData,
+//     startListening,
+//     stopListening,
+//     setShowModal,
+//     isWaitingForTrigger
+//   } = useVoiceChat();
+
+//   return (
+//     <>
+//       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-4">
+//         {error && (
+//           <div className="bg-destructive/15 text-destructive px-4 py-2 rounded-lg max-w-md">
+//             {error}
+//           </div>
+//         )}
+
+//         <VoiceButton 
+//           listening={isListening}
+//           loading={loading}
+//           onClick={isListening ? stopListening : startListening}
+//           waitingForTrigger={isWaitingForTrigger}
+//         />
+//       </div>
+
+//       {contentType === 'team' ? (
+//         <TeamDataModal 
+//           isOpen={showModal}
+//           onClose={() => setShowModal(false)}
+//           teamData={teamData}
+//           contentType={contentType}
+//         />
+//       ) : (
+//         <ResponseModal
+//           isOpen={showModal}
+//           onClose={() => setShowModal(false)}
+//           response={response}
+//           type={contentType}
+//         />
+//       )}
+//     </>
+//   );
+// }
