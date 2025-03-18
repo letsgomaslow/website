@@ -57,7 +57,18 @@ function VoiceAgentApp({
   const handleTalkClick = () => {
     if (loading) return;
     
-    startListening();
+    // Check if already listening
+    if (isListening) {
+      // If already listening, stop first
+      stopListening();
+      // Optional: Add a small delay before starting to listen again
+      setTimeout(() => {
+        startListening();
+      }, 300);
+    } else {
+      // If not listening, start
+      startListening();
+    }
     setActiveButton('talk');
   };
 
