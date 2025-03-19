@@ -13,6 +13,7 @@ export function useVoiceChat() {
   const [contentType, setContentType] = useState<ContentType>(null);
   const [showModal, setShowModal] = useState(false);
   const [isWaitingForTrigger, setIsWaitingForTrigger] = useState(false);
+  const [isInterrupted, setIsInterrupted] = useState(false);
   
   // WebRTC and OpenAI setup
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
@@ -48,6 +49,7 @@ export function useVoiceChat() {
     }
     
     isRecognitionActive.current = false;
+    setIsInterrupted(false);
   }, [peerConnection]);
 
   const handleNetworkError = () => {
@@ -56,8 +58,18 @@ export function useVoiceChat() {
   };
 
   const handleVoiceCommand = useCallback(async (text: string) => {
-    if (!text) return;
+    if (!text || isInterrupted) return;
     setLoading(true);
+
+    const interruptPhrases = ['stop', 'be quiet', 'shut up', 'enough'];
+
+    if (interruptPhrases.some(phrase => text.toLowerCase().includes(phrase))) {
+      setIsInterrupted(true);
+      setLoading(false);
+      setResponse('');
+      setIsWaitingForTrigger(true);
+      return;
+    }
     
     const commandPatterns = {
       team: /team|members|employees|staff|who.*work|people.*company/i,
@@ -84,12 +96,6 @@ export function useVoiceChat() {
           body: JSON.stringify({
             messages: [
               {
-                role: "system",
-                content: `You are an AI assistant for Maslow AI, a company focused on practical AI solutions. 
-                         Provide helpful, concise responses. If you're not sure about something specific to 
-                         Maslow AI, provide general information related to the topic.`
-              },
-              {
                 role: "user",
                 content: text
               }
@@ -105,19 +111,24 @@ export function useVoiceChat() {
         if (data.error) {
           throw new Error(data.error);
         }
-        
-        setResponse(data.message || 'I apologize, but I was unable to generate a response.');
+        if (!isInterrupted) {
+          setResponse(data.message || 'I apologize, but I was unable to generate a response.');
+        }
       } catch (err: any) {
         console.error('API error:', err);
-        setError(`Failed to process request: ${err.message}`);
-        setResponse('I apologize, but I encountered an error while processing your request.');
+        if (!isInterrupted) {
+          setError(`Failed to process request: ${err.message}`);
+          setResponse('I apologize, but I encountered an error while processing your request.');
+        }
       }
     }
-  
-    setLoading(false);
-    setTranscript('');
-    setIsWaitingForTrigger(true);
-  }, []);
+
+    if (!isInterrupted) {
+      setLoading(false);
+      setTranscript('');
+      setIsWaitingForTrigger(true);
+    }
+  }, [isInterrupted]);
 
   const configureDataChannel = (dc: RTCDataChannel) => {
     const event = {
@@ -185,7 +196,7 @@ export function useVoiceChat() {
         audioEl.srcObject = event.streams[0];
         audioEl.autoplay = true;
         audioEl.controls = true;
-        document.body.appendChild(audioEl);
+        // document.body.appendChild(audioEl);
       };
 
       const dc = pc.createDataChannel('oai-events');
@@ -246,101 +257,96 @@ export function useVoiceChat() {
         return;
       }
 
-      try {
-        const SpeechRecognition = window.webkitSpeechRecognition;
-        recognition.current = new SpeechRecognition();
-        recognition.current.continuous = true;
-        recognition.current.interimResults = true;
-        recognition.current.lang = 'en-US';
+      const SpeechRecognition = window.webkitSpeechRecognition;
+      recognition.current = new SpeechRecognition();
+      recognition.current.continuous = true;
+      recognition.current.interimResults = true;
+      recognition.current.lang = 'en-US';
 
-        recognition.current.onstart = () => {
-          isRecognitionActive.current = true;
-          setIsListening(true);
-          setIsWaitingForTrigger(true);
-          setError('');
-        };
+      recognition.current.onstart = () => {
+        isRecognitionActive.current = true;
+        setIsListening(true);
+        setIsWaitingForTrigger(true);
+        setError('');
+      };
 
-        recognition.current.onresult = (event: any) => {
-          if (!isRecognitionActive.current) return;
+      recognition.current.onresult = (event: any) => {
+        if (!isRecognitionActive.current) return; 
+
+        const lastResult = event.results[event.results.length - 1];
+        const transcript = lastResult[0].transcript.toLowerCase().trim();
+        
+        if (commandTimeout.current) {
+          clearTimeout(commandTimeout.current);
+        }
+
           
-          const lastResult = event.results[event.results.length - 1];
-          const transcript = lastResult[0].transcript.toLowerCase().trim();
-          
-          if (commandTimeout.current) {
-            clearTimeout(commandTimeout.current);
+        if (isWaitingForTrigger) {
+          if (transcript.includes('hey maslow') || transcript.includes('hi maslow')) {
+            setIsWaitingForTrigger(false);
+            setTranscript('');
+            setIsInterrupted(false);
           }
+        } else {
+          setTranscript(transcript);
+        
+          if (lastResult.isFinal && !isInterrupted) {
+            commandTimeout.current = setTimeout(() => {
+              handleVoiceCommand(transcript);
+            }, 1000);
+          }
+        }
+      };
 
-          if (isWaitingForTrigger) {
-            if (transcript.includes('hey maslow') || transcript.includes('hi maslow')) {
-              setIsWaitingForTrigger(false);
-              setTranscript('');
-            }
-          } else {
-            setTranscript(transcript);
-            
-            if (lastResult.isFinal) {
-              commandTimeout.current = setTimeout(() => {
-                handleVoiceCommand(transcript);
-                setIsWaitingForTrigger(true);
-              }, 1000);
-            }
-          }
-        };
-
-        recognition.current.onend = () => {
-          const wasActive = isRecognitionActive.current;
-          isRecognitionActive.current = false;
-          
-          if (isListening && !loading && wasActive) {
-            setTimeout(() => {
-              if (isListening && !isRecognitionActive.current && recognition.current) {
-                try {
-                  recognition.current.start();
-                } catch (err) {
-                  console.warn('Failed to restart recognition:', err);
-                  setIsListening(false);
-                }
-              }
-            }, 300);
-          } else {
-            setIsListening(false);
-          }
-        };
-
-        recognition.current.onerror = (event: any) => {
-          if (event.error === 'aborted') {
-            isRecognitionActive.current = false;
-            return;
-          }
-          
-          switch (event.error) {
-            case 'network':
-              handleNetworkError();
-              break;
-            case 'not-allowed':
-              setError('Microphone access denied. Please allow microphone access and try again.');
-              setIsListening(false);
-              break;
-            case 'no-speech':
-              console.log('No speech detected');
-              break;
-            default:
-              if (retryCount.current < MAX_RETRIES) {
-                retryCount.current++;
-                setTimeout(() => {
-                  startListening();
-                }, 1000);
-              } else {
-                setError(`Recognition error: ${event.error}. Please try again.`);
+      recognition.current.onend = () => {
+        const wasActive = isRecognitionActive.current;
+        isRecognitionActive.current = false;
+        
+        if (isListening && !loading && wasActive && !isInterrupted) {
+          setTimeout(() => {
+            if (isListening && !isRecognitionActive.current && recognition.current) {
+              try {
+                recognition.current.start();
+              } catch (err) {
+                console.warn('Failed to restart recognition:', err);
                 setIsListening(false);
               }
-          }
-        };
+            }
+          }, 300);
+        } else {
+          setIsListening(false);
+        }
+      };
 
-      } catch (err) {
-        console.error('Error initializing speech recognition:', err);
-        setError('Failed to initialize speech recognition. Please refresh the page.');
-      }
+      recognition.current.onerror = (event: any) => {
+        if (event.error === 'aborted') {
+          isRecognitionActive.current = false;
+          return;
+        }
+        
+        switch (event.error) {
+          case 'network':
+            handleNetworkError();
+            break;
+          case 'not-allowed':
+            setError('Microphone access denied. Please allow microphone access and try again.');
+            setIsListening(false);
+            break;
+          case 'no-speech':
+            console.log('No speech detected');
+            break;
+          default:
+            if (retryCount.current < MAX_RETRIES) {
+              retryCount.current++;
+              setTimeout(() => {
+                startListening();
+              }, 1000);
+            } else {
+              setError(`Recognition error: ${event.error}. Please try again.`);
+              setIsListening(false);
+            }
+        }
+      };
 
       await initializeWebRTC();
       
@@ -355,7 +361,7 @@ export function useVoiceChat() {
       setError('Failed to start voice chat. Please refresh and try again.');
       setIsListening(false);
     }
-  }, [cleanup, isListening, loading, isWaitingForTrigger, handleVoiceCommand, initializeWebRTC]);
+  }, [cleanup, isListening, loading, handleVoiceCommand, isInterrupted, initializeWebRTC]);
 
   const stopListening = useCallback(() => {
     cleanup();

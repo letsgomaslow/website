@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Mic, MicOff, X, Loader, Bot } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { Mic, MicOff, X, Bot, Brain, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TeamMember } from '@/DataModels/TeamDataModel';
 import Markdown from 'react-markdown';
@@ -32,6 +32,8 @@ function VoiceAgentApp({
 }: VoiceAgentProps) {
   const [activeButton, setActiveButton] = useState<'mute' | 'talk'>(isListening ? 'talk' : 'mute');
   const [showContent, setShowContent] = useState(false);
+  const [state, setState] = useState<'idle' | 'listening' | 'processing' | 'responding'>('idle');
+  const contentRef = useRef<HTMLDivElement>(null);
   
   // Update the active button when listening state changes from outside
   useEffect(() => {
@@ -45,31 +47,42 @@ function VoiceAgentApp({
     }
   }, [response, teamData, contentType]);
 
+  // Update animation state based on voice assistant state
+  useEffect(() => {
+    if (loading) {
+      setState('processing');
+    } else if (isListening && !isWaiting) {
+      setState('responding');
+    } else if (isListening) {
+      setState('listening');
+    } else {
+      setState('idle');
+    }
+  }, [isListening, isWaiting, loading]);
+
+  // Scroll to the top of the content when content changes
+  useEffect(() => {
+    if (contentRef.current && showContent) {
+      contentRef.current.scrollTop = 0;
+    }
+  }, [contentType, response, teamData]);
+
   // Handle mute button click
   const handleMuteClick = () => {
     if (loading) return;
     
     stopListening();
     setActiveButton('mute');
+    setState('idle');
   };
 
   // Handle talk button click
   const handleTalkClick = () => {
     if (loading) return;
     
-    // Check if already listening
-    if (isListening) {
-      // If already listening, stop first
-      stopListening();
-      // Optional: Add a small delay before starting to listen again
-      setTimeout(() => {
-        startListening();
-      }, 300);
-    } else {
-      // If not listening, start
-      startListening();
-    }
+    startListening();
     setActiveButton('talk');
+    setState('listening');
   };
 
   // Company info for company and contact views
@@ -82,13 +95,103 @@ function VoiceAgentApp({
     }
   };
 
+  // Animation component based on current state
+  const renderAnimation = () => {
+    switch(state) {
+      case 'listening':
+        return (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="w-24 h-24 mx-auto mb-4"
+          >
+            <div className="h-full w-full flex items-center justify-center">
+              <motion.div
+                className="w-16 h-16 relative"
+                animate={{
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <div className="absolute inset-0 bg-brand-green/30 rounded-full animate-ping" />
+                <div className="absolute inset-0 bg-brand-green/50 rounded-full" />
+                <Mic className="absolute inset-0 m-auto text-brand-green w-8 h-8" />
+              </motion.div>
+            </div>
+          </motion.div>
+        );
+      case 'responding':
+        return (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="w-24 h-24 mx-auto mb-4"
+          >
+            <div className="h-full w-full flex items-center justify-center">
+              <motion.div
+                className="w-16 h-16 relative"
+                animate={{
+                  y: [0, -5, 0],
+                }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <div className="absolute inset-0 bg-brand-pink/30 rounded-full animate-pulse" />
+                <div className="absolute inset-0 bg-brand-pink/50 rounded-full" />
+                <MessageSquare className="absolute inset-0 m-auto text-brand-pink w-8 h-8" />
+              </motion.div>
+            </div>
+          </motion.div>
+        );
+      case 'processing':
+        return (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="w-24 h-24 mx-auto mb-4"
+          >
+            <div className="h-full w-full flex items-center justify-center">
+              <motion.div
+                className="w-16 h-16 relative"
+                animate={{
+                  rotate: 360,
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              >
+                <div className="absolute inset-0 bg-brand-pink/20 rounded-full" />
+                <div className="absolute inset-0 bg-brand-pink/30 rounded-full animate-pulse" />
+                <Brain className="absolute inset-0 m-auto text-brand-pink w-8 h-8" />
+              </motion.div>
+            </div>
+          </motion.div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // Content Renderers
   const renderTeamContent = () => (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.5 }}
-      className="mt-8 grid gap-6 sm:grid-cols-2 px-4"
+      className="grid gap-6 sm:grid-cols-2 px-4"
     >
       <motion.h2 
         initial={{ opacity: 0, y: -10 }}
@@ -110,18 +213,18 @@ function VoiceAgentApp({
           transition={{ duration: 0.6, delay: index * 0.2 }}
           className="relative overflow-hidden rounded-2xl bg-background/50 backdrop-blur-sm"
         >
-          <div className="grid sm:grid-cols-2 gap-4 p-4">
-            <div className="relative aspect-square rounded-xl overflow-hidden">
+          <div className="flex flex-row gap-0 p-4">
+            <div className="relative aspect-square rounded-xl overflow-hidden w-24">
               <div className="absolute inset-0 bg-gradient-to-tr from-brand-pink/20 to-brand-green/20" />
               <img src={member.imageUrl} alt={member.name} className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             </div>
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center ml-4">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="space-y-2"
+                className="space-y-1"
               >
                 <h3 className="text-xl font-bold">{member.name}</h3>
                 <p className="text-brand-pink font-medium">{member.role}</p>
@@ -140,7 +243,7 @@ function VoiceAgentApp({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.5 }}
-      className="mt-8 px-4"
+      className="px-4"
     >
       <motion.h2 
         initial={{ opacity: 0, y: -10 }}
@@ -193,7 +296,7 @@ function VoiceAgentApp({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.5 }}
-      className="mt-8 px-4"
+      className="px-4"
     >
       <motion.h2 
         initial={{ opacity: 0, y: -10 }}
@@ -225,7 +328,7 @@ function VoiceAgentApp({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.5 }}
-      className="mt-8 px-4"
+      className="px-4"
     >
       <motion.h2 
         initial={{ opacity: 0, y: -10 }}
@@ -265,9 +368,198 @@ function VoiceAgentApp({
       </motion.div>
     </motion.div>
   );
+
+  // Button Renderers
+  const renderTalkButton = () => {
+    // Base button style
+    const buttonBaseClass = `px-6 py-4 rounded-full transition-all duration-200 flex items-center gap-2 ${
+      loading ? 'opacity-70 cursor-not-allowed' : ''
+    } ${
+      activeButton === 'talk'
+        ? 'bg-brand-green/30 text-brand-green ring-2 ring-brand-green'
+        : 'bg-brand-green/20 hover:bg-brand-green/30 text-brand-green'
+    }`;
+
+    // Button content based on state
+    let buttonContent;
+    switch (state) {
+      case 'listening':
+        buttonContent = (
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [1, 0.7, 1]
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="relative"
+            >
+              <Mic className="w-6 h-6" />
+            </motion.div>
+            <span>Listening</span>
+          </div>
+        );
+        break;
+      case 'processing':
+        buttonContent = (
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{
+                rotate: 360
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="relative"
+            >
+              <Brain className="w-6 h-6" />
+            </motion.div>
+            <span>Processing</span>
+          </div>
+        );
+        break;
+      case 'responding':
+        buttonContent = (
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{
+                y: [0, -3, 0]
+              }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="relative"
+            >
+              <MessageSquare className="w-6 h-6" />
+            </motion.div>
+            <span>Responding</span>
+          </div>
+        );
+        break;
+      default:
+        buttonContent = (
+          <div className="flex items-center gap-2">
+            <Mic className="w-5 h-5" />
+            <span>Talk</span>
+          </div>
+        );
+    }
+
+    return (
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleTalkClick}
+        disabled={loading && state !== 'processing'}
+        className={buttonBaseClass}
+      >
+        {buttonContent}
+      </motion.button>
+    );
+  };
+
+  // Compact button for when content is shown
+  const renderCompactTalkButton = () => {
+    const buttonBaseClass = `px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium ${
+      loading ? 'opacity-70 cursor-not-allowed' : ''
+    } ${
+      activeButton === 'talk'
+        ? 'bg-brand-green/30 text-brand-green ring-2 ring-brand-green'
+        : 'bg-brand-green/20 hover:bg-brand-green/30 text-brand-green'
+    }`;
+
+    let buttonContent;
+    switch (state) {
+      case 'listening':
+        buttonContent = (
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [1, 0.7, 1]
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <Mic className="w-4 h-4" />
+            </motion.div>
+            <span>Listening</span>
+          </div>
+        );
+        break;
+      case 'processing':
+        buttonContent = (
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{
+                rotate: 360
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            >
+              <Brain className="w-4 h-4" />
+            </motion.div>
+            <span>Processing</span>
+          </div>
+        );
+        break;
+      case 'responding':
+        buttonContent = (
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{
+                y: [0, -2, 0]
+              }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <MessageSquare className="w-4 h-4" />
+            </motion.div>
+            <span>Responding</span>
+          </div>
+        );
+        break;
+      default:
+        buttonContent = (
+          <div className="flex items-center gap-2">
+            <Mic className="w-4 h-4" />
+            <span>Talk</span>
+          </div>
+        );
+    }
+
+    return (
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleTalkClick}
+        disabled={loading && state !== 'processing'}
+        className={buttonBaseClass}
+      >
+        {buttonContent}
+      </motion.button>
+    );
+  };
   
   return (
-    <div className="min-h-screen bg-background text-white overflow-auto">
+    <div className="min-h-screen bg-background text-white overflow-hidden">
       {/* Main Content Area */}
       <div className="min-h-screen flex flex-col">
         {/* Header - Only close button */}
@@ -284,105 +576,75 @@ function VoiceAgentApp({
           )}
         </header>
         
-        {/* Main Area - Content or Controls */}
-        <div className="flex-1 flex flex-col overflow-auto">
-          <AnimatePresence mode="wait">
-            {!showContent ? (
-              <motion.div 
-                key="controls"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex-1 flex flex-col justify-center items-center p-8"
-              >
-                {/* Status indicator */}
-                {loading && (
-                  <div className="mb-6 flex items-center gap-2">
-                    <Loader className="w-5 h-5 animate-spin text-brand-green" />
-                    <span className="text-muted-foreground">Processing...</span>
-                  </div>
-                )}
+        {/* Main Area with layout shift animation */}
+        <AnimatePresence>
+          {!showContent ? (
+            // Full screen view (initial state)
+            <motion.div 
+              key="full-screen"
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex-1 flex flex-col items-center justify-center"
+            >
+              {/* Centered animation */}
+              <AnimatePresence mode="wait">
+                {state !== 'idle' && renderAnimation()}
+              </AnimatePresence>
+              
+              {/* Control buttons */}
+              <div className="flex gap-6 mt-6">
+                {/* Mute Button */}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleMuteClick}
+                  disabled={loading}
+                  className={`px-6 py-4 rounded-full transition-all duration-200 flex items-center gap-2 ${
+                    loading ? 'opacity-70 cursor-not-allowed' : ''
+                  } ${
+                    activeButton === 'mute'
+                      ? 'bg-brand-pink/30 text-brand-pink ring-2 ring-brand-pink'
+                      : 'bg-brand-pink/20 hover:bg-brand-pink/30 text-brand-pink'
+                  }`}
+                >
+                  <MicOff className={`${activeButton === 'mute' ? 'w-6 h-6' : 'w-5 h-5'}`} />
+                  <span>Mute</span>
+                </motion.button>
                 
-                {isListening && isWaiting && (
-                  <div className="mb-6 text-brand-green animate-pulse">
-                    Listening for trigger word...
-                  </div>
-                )}
-                
-                {/* Two button layout - Mute and Talk in control view */}
-                <div className="flex gap-6">
-                  {/* Mute Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleMuteClick}
-                    disabled={loading}
-                    className={`px-6 py-4 rounded-full transition-all duration-200 flex items-center gap-2 ${
-                      loading ? 'opacity-70 cursor-not-allowed' : ''
-                    } ${
-                      activeButton === 'mute'
-                        ? 'bg-brand-pink/30 text-brand-pink ring-2 ring-brand-pink'
-                        : 'bg-brand-pink/20 hover:bg-brand-pink/30 text-brand-pink'
-                    }`}
-                  >
-                    <MicOff className={`${activeButton === 'mute' ? 'w-6 h-6' : 'w-5 h-5'}`} />
-                    <span>Mute</span>
-                  </motion.button>
-                  
-                  {/* Talk Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleTalkClick}
-                    disabled={loading}
-                    className={`px-6 py-4 rounded-full transition-all duration-200 flex items-center gap-2 ${
-                      loading ? 'opacity-70 cursor-not-allowed' : ''
-                    } ${
-                      activeButton === 'talk'
-                        ? 'bg-brand-green/30 text-brand-green ring-2 ring-brand-green'
-                        : 'bg-brand-green/20 hover:bg-brand-green/30 text-brand-green'
-                    }`}
-                  >
-                    {activeButton === 'talk' && isWaiting ? (
-                      <Mic className="w-6 h-6 animate-pulse" />
-                    ) : (
-                      <Mic className={`${activeButton === 'talk' ? 'w-6 h-6' : 'w-5 h-5'}`} />
-                    )}
-                    <span>Talk</span>
-                  </motion.button>
-                </div>
-              </motion.div>
-            ) : (
+                {/* Talk Button */}
+                {renderTalkButton()}
+              </div>
+            </motion.div>
+          ) : (
+            // Split view (after content is available)
+            <motion.div 
+              key="split-screen"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex-1 flex flex-row"
+            >
+              {/* Left sidebar (1/4 width) */}
               <motion.div
-                key="content"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex-1 flex flex-col"
+                initial={{ width: "0%" }}
+                animate={{ width: "25%" }}
+                transition={{ duration: 0.5 }}
+                className="h-full bg-gray-900/80 shadow-lg flex flex-col items-center py-8"
               >
-                {/* Dynamic content based on content type */}
+                {/* Animation */}
                 <AnimatePresence mode="wait">
-                  {contentType === 'team' && teamData && renderTeamContent()}
-                  {contentType === 'ai' && renderAiResponse()}
-                  {contentType === 'company' && renderCompanyInfo()}
-                  {contentType === 'contact' && renderContactInfo()}
+                  {state !== 'idle' && renderAnimation()}
                 </AnimatePresence>
                 
-                {/* Content view control buttons - Replaced with just talk and mute buttons */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="mt-auto mb-8 flex justify-center gap-4 p-4"
-                >
-                  {/* Mute Button */}
+                {/* Compact control buttons */}
+                <div className="flex flex-col gap-4 mt-4 w-auto">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleMuteClick}
                     disabled={loading}
                     className={`px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium ${
-                      loading ? 'opacity-70 cursor-not-allowed bg-brand-pink/20 text-brand-pink' : 
+                      loading ? 'opacity-70 cursor-not-allowed' : ''
+                    } ${
                       activeButton === 'mute'
                         ? 'bg-brand-pink/30 text-brand-pink ring-2 ring-brand-pink'
                         : 'bg-brand-pink/20 hover:bg-brand-pink/30 text-brand-pink'
@@ -392,33 +654,29 @@ function VoiceAgentApp({
                     <span>Mute</span>
                   </motion.button>
                   
-                  {/* Talk Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleTalkClick}
-                    disabled={loading}
-                    className={`px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium ${
-                      loading ? 'opacity-70 cursor-not-allowed bg-brand-green/20 text-brand-green' : 
-                      activeButton === 'talk'
-                        ? 'bg-brand-green/30 text-brand-green ring-2 ring-brand-green'
-                        : 'bg-brand-green/20 hover:bg-brand-green/30 text-brand-green'
-                    }`}
-                  >
-                    {loading ? (
-                      <Loader className="w-4 h-4 animate-spin" />
-                    ) : isListening && isWaiting ? (
-                      <Mic className="w-4 h-4 animate-pulse" />
-                    ) : (
-                      <Mic className="w-4 h-4" />
-                    )}
-                    <span>Talk</span>
-                  </motion.button>
-                </motion.div>
+                  {/* Compact Talk Button */}
+                  {renderCompactTalkButton()}
+                </div>
               </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+              
+              {/* Main content area (3/4 width) */}
+              <motion.div
+                ref={contentRef}
+                initial={{ width: "0%" }}
+                animate={{ width: "75%" }}
+                transition={{ duration: 0.5 }}
+                className="overflow-y-auto max-h-screen bg-background py-8"
+              >
+                <AnimatePresence mode="wait">
+                  {contentType === 'team' && teamData && renderTeamContent()}
+                  {contentType === 'ai' && renderAiResponse()}
+                  {contentType === 'company' && renderCompanyInfo()}
+                  {contentType === 'contact' && renderContactInfo()}
+                </AnimatePresence>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { TeamMember } from '@/lib/types';
+export type { TeamMember };
 
 export const teamMembers: TeamMember[] = [
   {
