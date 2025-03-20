@@ -76,7 +76,7 @@ export function useVoiceChat() {
       company: /company|business|organization|about.*maslow|what.*maslow/i,
       contact: /contact|reach|email|phone|address|location|where/i
     };
-  
+
     let matchedType: ContentType = 'ai';
     for (const [type, pattern] of Object.entries(commandPatterns)) {
       if (pattern.test(text)) {
@@ -102,11 +102,11 @@ export function useVoiceChat() {
             ]
           })
         });
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+      
         const data = await response.json();
         if (data.error) {
           throw new Error(data.error);
@@ -172,7 +172,7 @@ export function useVoiceChat() {
           setContentType('contact');
           break;
       }
-      
+    
       const event = {
         type: 'conversation.item.create',
         item: {
@@ -249,9 +249,9 @@ export function useVoiceChat() {
   const startListening = useCallback(async () => {
     try {
       if (typeof window === 'undefined') return
-      
+
       cleanup();
-      
+
       if (!('webkitSpeechRecognition' in window)) {
         setError('Speech recognition is not supported in this browser.');
         return;
@@ -275,18 +275,18 @@ export function useVoiceChat() {
 
         const lastResult = event.results[event.results.length - 1];
         const transcript = lastResult[0].transcript.toLowerCase().trim();
-        
+
         if (commandTimeout.current) {
           clearTimeout(commandTimeout.current);
         }
 
-          setTranscript(transcript);
-        
-          if (lastResult.isFinal && !isInterrupted) {
-            commandTimeout.current = setTimeout(() => {
-              handleVoiceCommand(transcript);
-            }, 1000);
-          }
+        setTranscript(transcript);
+
+        if (lastResult.isFinal && !isInterrupted) {
+          commandTimeout.current = setTimeout(() => {
+            handleVoiceCommand(transcript);
+          }, 1000);
+        }
 
       };
 
