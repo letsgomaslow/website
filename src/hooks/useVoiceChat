@@ -1,0 +1,209 @@
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { TeamMember, teamMembers } from '@/DataModels/TeamDataModel';
+
+export function useVoiceChat() {
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [response, setResponse] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [contentType, setContentType] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [isWaitingForTrigger, setIsWaitingForTrigger] = useState(false);
+  
+  const recognition = useRef(null);
+  const commandTimeout = useRef(null);
+
+  const initializeSpeechRecognition = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    if (!('webkitSpeechRecognition' in window)) {
+      setError('Speech recognition is not supported in this browser.');
+      return;
+    }
+
+    const SpeechRecognition = window.webkitSpeechRecognition;
+    recognition.current = new SpeechRecognition();
+    recognition.current.continuous = true;
+    recognition.current.interimResults = true;
+
+    recognition.current.onstart = () => {
+      setIsListening(true);
+      setIsWaitingForTrigger(true);
+      console.log('Speech recognition started - waiting for trigger word');
+    };
+
+    recognition.current.onresult = (event) => {
+      const lastResult = event.results[event.results.length - 1];
+      const transcript = lastResult[0].transcript.toLowerCase().trim();
+      
+      // Clear any existing timeout
+      if (commandTimeout.current) {
+        clearTimeout(commandTimeout.current);
+      }
+
+      if (isWaitingForTrigger) {
+        if (transcript.includes('hey maslow') || transcript.includes('hi maslow')) {
+          console.log('Trigger word detected');
+          setIsWaitingForTrigger(false);
+          setTranscript('');
+          // Optional: Play a subtle sound to indicate activation
+        }
+      } else {
+        setTranscript(transcript);
+        
+        // If this is a final result, process after a short delay
+        if (lastResult.isFinal) {
+          commandTimeout.current = setTimeout(() => {
+            handleVoiceCommand(transcript);
+            setIsWaitingForTrigger(true); // Reset to waiting for trigger
+          }, 1000);
+        }
+      }
+    };
+
+    recognition.current.onend = () => {
+      console.log('Speech recognition ended');
+      if (isListening && !loading) {
+        recognition.current.start();
+      } else {
+        setIsListening(false);
+      }
+    };
+
+    recognition.current.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      if (event.error !== 'no-speech') {
+        setError(`Error: ${event.error}`);
+        setIsListening(false);
+      }
+    };
+  }, [isWaitingForTrigger, loading, isListening]);
+
+  const startListening = useCallback(() => {
+    try {
+      if (!recognition.current) {
+        initializeSpeechRecognition();
+      }
+      setError('');
+      setIsWaitingForTrigger(true);
+      recognition.current.start();
+    } catch (err) {
+      console.error('Error starting speech recognition:', err);
+      setError('Failed to start speech recognition');
+    }
+  }, [initializeSpeechRecognition]);
+
+  const stopListening = useCallback(() => {
+    if (recognition.current) {
+      recognition.current.stop();
+      setIsListening(false);
+      setIsWaitingForTrigger(false);
+      if (commandTimeout.current) {
+        clearTimeout(commandTimeout.current);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    initializeSpeechRecognition();
+    return () => {
+      if (recognition.current) {
+        recognition.current.stop();
+      }
+      if (commandTimeout.current) {
+        clearTimeout(commandTimeout.current);
+      }
+    };
+  }, [initializeSpeechRecognition]);
+
+  const handleVoiceCommand = useCallback(async (text) => {
+    if (!text) return;
+    setLoading(true);
+    console.log('Processing command:', text);
+  
+    // Check for command patterns
+    const commandPatterns = {
+      team: /team|members|employees|staff|who.*work|people.*company/i,
+      company: /company|business|organization|about.*maslow|what.*maslow/i,
+      contact: /contact|reach|email|phone|address|location|where/i
+    };
+  
+    let matchedType = 'ai';
+    for (const [type, pattern] of Object.entries(commandPatterns)) {
+      if (pattern.test(text)) {
+        matchedType = type;
+        break;
+      }
+    }
+  
+    setContentType(matchedType);
+    setShowModal(true);
+  
+    if (matchedType === 'ai') {
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "system",
+                content: `You are an AI assistant for Maslow AI, a company focused on practical AI solutions. 
+                         Provide helpful, concise responses. If you're not sure about something specific to 
+                         Maslow AI, provide general information related to the topic.`
+              },
+              {
+                role: "user",
+                content: text
+              }
+            ]
+          })
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        setResponse(data.message || 'I apologize, but I was unable to generate a response.');
+      } catch (err) {
+        console.error('API error:', err);
+        setError(`Failed to process request: ${err.message}`);
+        setResponse('I apologize, but I encountered an error while processing your request.');
+      }
+    }
+  
+    setLoading(false);
+    setTranscript('');
+    setIsWaitingForTrigger(true);
+  }, []);
+
+  useEffect(() => {
+    initializeSpeechRecognition();
+    return () => {
+      if (recognition.current) {
+        recognition.current.stop();
+      }
+    };
+  }, [initializeSpeechRecognition]);
+
+  return {
+    isListening,
+    loading,
+    transcript,
+    response,
+    error,
+    showModal,
+    contentType,
+    teamData: teamMembers,
+    startListening,
+    stopListening,
+    setShowModal,
+    isWaitingForTrigger
+  };
+}

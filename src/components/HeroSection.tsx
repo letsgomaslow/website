@@ -10,10 +10,6 @@ import { Button } from "@/components/ui/button";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 
 export function HeroSection() {
-  // useEffect(() => {
-  //   renderCanvas();
-  // }, []);
-
   return (
     <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden">
       {/* Background with Gradient */}
@@ -22,12 +18,12 @@ export function HeroSection() {
           src="/images/hero-bg.jpg"
           alt="AI Technology Background"
           fill
-          className="object-cover"
+          className="object-cover hidden dark:block"
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background dark:from-background/80 dark:via-background/50 dark:to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 dark:from-background/80 dark:via-transparent dark:to-background/80" />
       </div>
       
       <div className="container relative py-layout-2xl">
@@ -118,4 +114,4 @@ export function HeroSection() {
       <div className="absolute bottom-0 left-1/2 h-24 w-px -translate-x-1/2 bg-border/50" />
     </section>
   );
-} 
+}

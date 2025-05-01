@@ -10,6 +10,7 @@ import { ThemeAwareToast } from "@/components/theme/ThemeAwareToast";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { VoiceChatProvider } from "@/components/chat/VoiceChatProvider";
+import { Providers } from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,19 +34,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body>
-        <ThemeProvider defaultTheme="system" enableSystem>
+        <Providers>
           <ClientProvider>
             <TRPCReactProvider>
               <div className="relative min-h-screen">
                 <Header />
                 <main className="container py-12 pt-32">{children}</main>
                 <Footer />
-                {/* <VoiceChatProvider /> */}
+                <VoiceChatProvider />
               </div>
               <ThemeAwareToast />
             </TRPCReactProvider>
           </ClientProvider>
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

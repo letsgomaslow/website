@@ -62,9 +62,9 @@ export function Header() {
             />
           </div>
         </Link>
-        <div className="flex items-center space-x-4">
+        {/* <div className="flex items-center space-x-4">
           <ThemeToggle />
-        </div>
+        </div> */}
         <NavBar items={navItems} className="sm:pt-2 flex flex-wrap gap-4 whitespace-nowrap" />
         {/* <NavBar items={navItems} className="flex flex-wrap gap-4 whitespace-nowrap text-sm md:text-base" /> */}
       </div>
