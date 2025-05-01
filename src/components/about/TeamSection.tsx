@@ -22,9 +22,13 @@ export function TeamSection() {
             <div className="flex h-full flex-col items-center justify-between rounded-md p-6">
               <div className="h-24 w-24 rounded-full overflow-hidden bg-muted">
                 <img
-                  src={member.imageUrl}
+                  src={member.imageUrl || '/images/people.png'}
                   alt={member.name}
-                  className="h-full w-full object-cover"
+                  className="h-15 w-15 object-cover p-5"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/images/people.png';
+                  }}
                 />
               </div>
               <div className="mt-6 text-center">
@@ -42,4 +46,4 @@ export function TeamSection() {
       </div>
     </section>
   );
-} 
+}
