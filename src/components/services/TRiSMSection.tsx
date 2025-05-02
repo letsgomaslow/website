@@ -57,7 +57,7 @@ export function TRiSMSection() {
       >
         <h2 className="font-heading text-3xl font-bold leading-[1.1] sm:text-4xl md:text-5xl">
           TRiSM –{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#EE7BB3] to-[#6DC4AD] bg-clip-text text-transparent">
             Trust, Risk, and Security Management
           </span>
         </h2>

@@ -10,7 +10,7 @@ export default function ContactPage() {
         <div className="mx-auto max-w-[58rem] text-center">
           <h1 className="font-heading text-4xl font-bold leading-[1.1] sm:text-5xl md:text-6xl">
             Get in{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#EE7BB3] to-[#6DC4AD] bg-clip-text text-transparent">
               Touch
             </span>
           </h1>
@@ -19,7 +19,7 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="mx-auto mt-8 max-w-[58rem]">
+        {/* <div className="mx-auto mt-8 max-w-[58rem]">
           <div className="mb-12 rounded-lg border bg-muted/50 p-6">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
@@ -34,7 +34,7 @@ export default function ContactPage() {
           <div className="rounded-lg border bg-background p-8">
             <ContactForm />
           </div>
-        </div>
+        </div> */}
 
         <div className="mx-auto mt-24 max-w-[58rem]">
           <FAQSection />

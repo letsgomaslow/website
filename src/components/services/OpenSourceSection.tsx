@@ -63,7 +63,7 @@ export function OpenSourceSection() {
           variants={sectionVariants}
         >
           Open‑Source{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#EE7BB3] to-[#6DC4AD] bg-clip-text text-transparent">
             Alternatives (BYOAI & Beyond)
           </span>
         </motion.h2>

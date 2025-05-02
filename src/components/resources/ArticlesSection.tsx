@@ -119,8 +119,12 @@ export function ArticlesSection({ blogPosts }: { blogPosts: Array<any> }) {
                 alt="Blog Post"
                 className="w-full h-auto rounded-lg"
               />
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{post.title}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{post.description}</p>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                {post.title.length > 60 ? `${post.title.substring(0, 50)}...` : post.title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                {post.description.length > 120 ? `${post.description.substring(0, 120)}...` : post.description}
+              </p>
 
               <button
                 onClick={() => handleLearnMore(post.id)}
