@@ -1,37 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { StrategySessionForm } from "./StrategySessionForm";
+import Link from "next/link";
 
 export function CTAButtons() {
-  const [showStrategyForm, setShowStrategyForm] = useState(false);
-  const router = useRouter();
-
-  const handleWorkbookClick = () => {
-    router.push("/contact"); // Adjust this path to your contact page route
-  };
-
   return (
     <div className="flex gap-4 items-center">
-      <Button 
-        variant="gradient" 
-        onClick={() => setShowStrategyForm(true)}
+      <Link 
+        href="https://calendly.com/maslow-ai/30min" 
+        target="_blank" 
+        rel="noopener noreferrer"
       >
-        Book a 30-Minute AI Strategy Session
-      </Button>
+        <Button variant="gradient">
+          Book a 30-Minute AI Strategy Session
+        </Button>
+      </Link>
       
-      <Button 
-        variant="outline"
-        onClick={handleWorkbookClick}
+      <Link 
+        href="https://conversationalai.maslow.ai/" 
+        target="_blank" 
+        rel="noopener noreferrer"
       >
-        Download Free AI Planning Workbook
-      </Button>
-
-      {showStrategyForm && (
-        <StrategySessionForm onClose={() => setShowStrategyForm(false)} />
-      )}
+        <Button variant="outline">
+          Talk to our AI Sales Avatar
+        </Button>
+      </Link>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -30,8 +29,8 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 dark:from-background/80 dark:via-transparent dark:to-background/80" />
       </div>
       
-      <div className="container relative py-layout-2xl">
-        <div className="mx-auto max-w-[90rem]">
+      <div className="container relative py-layout-2xl pointer-events-none">
+        <div className="mx-auto max-w-[90rem] pointer-events-auto">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -81,32 +80,43 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center z-10"
             >
-              <MagneticButton className="w-full sm:w-auto">
-                <Button 
-                  variant="gradient" 
-                  size="lg"
-                  className="w-full sm:w-auto text-base sm:text-lg font-semibold group"
-                  onClick={() => setShowForm(true)}
-                >
-                  Book a 30-Minute AI Strategy Session
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </MagneticButton>
+              <Link 
+                href="https://calendly.com/maslow-ai/30min" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <MagneticButton className="w-full sm:w-auto">
+                  <Button 
+                    variant="gradient" 
+                    size="lg"
+                    className="w-full sm:w-auto text-base sm:text-lg font-semibold group"
+                  >
+                    Book a 30-Minute AI Strategy Session
+                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </MagneticButton>
+              </Link>
               
-              <MagneticButton className="w-full sm:w-auto">
-                <Link href="/contact" className="w-full sm:w-auto">
+              <Link  
+                href="https://conversationalai.maslow.ai/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <MagneticButton className="w-full sm:w-auto">
                   <Button 
                     variant="outline" 
                     size="lg"
                     className="w-full sm:w-auto text-base sm:text-lg font-semibold group"
                   >
-                    Download Free AI Planning Workbook
+                    Talk to our AI Sales Avatar
                     <MessageCircle className="ml-2 h-5 w-5 transition-transform group-hover:rotate-12" />
                   </Button>
-                </Link>
-              </MagneticButton>
+                </MagneticButton>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
