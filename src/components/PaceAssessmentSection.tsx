@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, Gauge, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useState } from "react";
+import { BookSessionModal } from "@/components/modals/BookSessionModal";
 
 const paceTypes = [
   {
@@ -21,6 +23,7 @@ const paceTypes = [
 ];
 
 export function PaceAssessmentSection() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <section className="relative py-layout-2xl overflow-hidden bg-muted/50">
       {/* Background Decorations */}
@@ -88,25 +91,14 @@ export function PaceAssessmentSection() {
           </div>
 
           {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="mt-8"
-          >
-            <Link href="/assessment">
-              <Button
-                size="lg"
-                className="group gap-2"
-              >
-                Take the Assessment
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          </motion.div>
+          
+
+          <BookSessionModal 
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
         </motion.div>
       </div>
     </section>
   );
-} 
+}

@@ -8,8 +8,12 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 // import { renderCanvas } from "@/components/ui/canvas";
 import { Button } from "@/components/ui/button";
 import { MagneticButton } from "@/components/ui/magnetic-button";
+import { useState } from "react";
+import { StrategySessionForm } from "@/components/StrategySessionForm";
 
 export function HeroSection() {
+  const [showForm, setShowForm] = useState(false);
+
   return (
     <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden">
       {/* Background with Gradient */}
@@ -80,26 +84,25 @@ export function HeroSection() {
               className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center"
             >
               <MagneticButton className="w-full sm:w-auto">
-                <Link href="/contact" className="w-full sm:w-auto">
-                  <Button 
-                    variant="gradient" 
-                    size="lg"
-                    className="w-full sm:w-auto text-base sm:text-lg font-semibold group"
-                  >
-                    Discover Your AI Pace
-                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
+                <Button 
+                  variant="gradient" 
+                  size="lg"
+                  className="w-full sm:w-auto text-base sm:text-lg font-semibold group"
+                  onClick={() => setShowForm(true)}
+                >
+                  Book a 30-Minute AI Strategy Session
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
               </MagneticButton>
               
               <MagneticButton className="w-full sm:w-auto">
-                <Link href="/chat" className="w-full sm:w-auto">
+                <Link href="/contact" className="w-full sm:w-auto">
                   <Button 
                     variant="outline" 
                     size="lg"
                     className="w-full sm:w-auto text-base sm:text-lg font-semibold group"
                   >
-                    Speak to a Virtual Advisor
+                    Download Free AI Planning Workbook
                     <MessageCircle className="ml-2 h-5 w-5 transition-transform group-hover:rotate-12" />
                   </Button>
                 </Link>
@@ -108,6 +111,9 @@ export function HeroSection() {
           </motion.div>
         </div>
       </div>
+
+      {/* Show the form popup when showForm is true */}
+      {showForm && <StrategySessionForm onClose={() => setShowForm(false)} />}
 
       {/* Decorative Elements */}
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />

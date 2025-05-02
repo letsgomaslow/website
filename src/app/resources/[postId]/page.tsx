@@ -23,47 +23,44 @@ export default function ResourcePage() {
   }, [postId]);
 
   return (
-    <div className="container px-4 sm:px-6 lg:px-8 relative">
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-0 w-72 h-72 bg-[#EE7BB3]/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-0 w-72 h-72 bg-[#6DC4AD]/10 rounded-full blur-3xl" />
-      </div>
+    <div className="flex flex-col">
+      <section className="container py-24">
+        <div className="mx-auto max-w-[58rem]">
+          <h1 className="font-heading text-4xl font-bold leading-[1.1] sm:text-5xl md:text-6xl mb-4">
+            <span className="bg-gradient-to-r from-[#EE7BB3] to-[#6DC4AD] bg-clip-text text-transparent">
+              {blog?.title}
+            </span>
+          </h1>
+          
+          <p className="text-black/70 mb-8">
+            {blog?.publishedDate} | {blog?.publisher}
+          </p>
+          
+          <div className="border-t-2 border-black/10 mb-1"></div>
+          <div className="border-t-2 border-black/10 mb-8"></div>
 
-      <div className="relative max-w-3xl mx-auto">
-        <h1 className="font-heading text-4xl font-bold leading-[1.1] sm:text-5xl md:text-6xl mb-4">
-          <span className="bg-gradient-to-r from-[#EE7BB3] to-[#6DC4AD] bg-clip-text text-transparent">
-            {blog?.title}
-          </span>
-        </h1>
-        
-        <p className="text-black/70 mb-8">
-          {blog?.publishedDate} | {blog?.publisher}
-        </p>
-        
-        <div className="border-t-2 border-black/10 mb-1"></div>
-        <div className="border-t-2 border-black/10 mb-8"></div>
-
-        <ReactMarkdown
-          components={{
-            p: ({ node, ...props }) => <p className="text-black/70 mb-6" {...props} />,
-            h1: ({ node, ...props }) => <h1 className="text-[#EE7BB3] text-3xl font-bold mt-8 mb-4" {...props} />,
-            h2: ({ node, ...props }) => <h2 className="text-[#EE7BB3] text-2xl font-semibold mt-8 mb-4" {...props} />,
-            h3: ({ node, ...props }) => <h3 className="text-[#EE7BB3] text-xl font-semibold mt-6 mb-3" {...props} />,
-            h4: ({ node, ...props }) => <h4 className="text-[#EE7BB3] text-lg font-semibold mt-6 mb-3" {...props} />,
-            h5: ({ node, ...props }) => <h5 className="text-[#EE7BB3] text-base font-semibold mt-6 mb-3" {...props} />,
-            h6: ({ node, ...props }) => <h6 className="text-[#EE7BB3] text-base font-semibold mt-6 mb-3" {...props} />,
-            i: ({ node, ...props }) => <i className="text-black/90 italic" {...props} />,
-            li: ({ node, ...props }) => (
-              <li className="text-black/70 mb-2 flex items-center" {...props}>
-                <span className="text-[#6DC4AD] mr-2 text-xl">•</span>
-                <span>{props.children}</span>
-              </li>
-            ),
-          }}
-        >
-          {blog?.content}
-        </ReactMarkdown>
-      </div>
+          <ReactMarkdown
+            components={{
+              p: ({ node, ...props }) => <p className="text-black/70 mb-6" {...props} />,
+              h1: ({ node, ...props }) => <h1 className="text-[#EE7BB3] text-3xl font-bold mt-8 mb-4" {...props} />,
+              h2: ({ node, ...props }) => <h2 className="text-[#EE7BB3] text-2xl font-semibold mt-8 mb-4" {...props} />,
+              h3: ({ node, ...props }) => <h3 className="text-[#EE7BB3] text-xl font-semibold mt-6 mb-3" {...props} />,
+              h4: ({ node, ...props }) => <h4 className="text-[#EE7BB3] text-lg font-semibold mt-6 mb-3" {...props} />,
+              h5: ({ node, ...props }) => <h5 className="text-[#EE7BB3] text-base font-semibold mt-6 mb-3" {...props} />,
+              h6: ({ node, ...props }) => <h6 className="text-[#EE7BB3] text-base font-semibold mt-6 mb-3" {...props} />,
+              i: ({ node, ...props }) => <i className="text-black/90 italic" {...props} />,
+              li: ({ node, ...props }) => (
+                <li className="text-black/70 mb-2 flex items-center" {...props}>
+                  <span className="text-[#6DC4AD] mr-2 text-xl">•</span>
+                  <span>{props.children}</span>
+                </li>
+              ),
+            }}
+          >
+            {blog?.content}
+          </ReactMarkdown>
+        </div>
+      </section>
     </div>
   );
 }
