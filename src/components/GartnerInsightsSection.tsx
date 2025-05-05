@@ -100,9 +100,9 @@ export function GartnerInsightsSection() {
 
                       {/* Stat */}
                       <div className="space-y-1">
-                        <div className="text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent"
+                        <div className="text-4xl font-bold"
                           style={{
-                            backgroundImage: `linear-gradient(to right, var(--${insight.color.split(' ')[1]}) 0%, var(--${insight.color.split(' ')[3]}) 100%)`
+                            color: "black" // Changed from gradient to solid black
                           }}
                         >
                           {insight.stat}
@@ -124,4 +124,4 @@ export function GartnerInsightsSection() {
       </div>
     </section>
   );
-} 
+}
