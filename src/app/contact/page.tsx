@@ -19,8 +19,8 @@ export default function ContactPage() {
           </p>
         </div>
 
-        {/* <div className="mx-auto mt-8 max-w-[58rem]">
-          <div className="mb-12 rounded-lg border bg-muted/50 p-6">
+        <div className="mx-auto mt-8 max-w-[58rem]">
+          {/* <div className="mb-12 rounded-lg border bg-muted/50 p-6">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                 <Mic className="h-6 w-6 text-primary" />
@@ -29,12 +29,12 @@ export default function ContactPage() {
                 Use our voice‑based assistant for instant answers! Just ask: "What services do you offer?"
               </p>
             </div>
-          </div>
+          </div> */}
 
           <div className="rounded-lg border bg-background p-8">
             <ContactForm />
           </div>
-        </div> */}
+        </div>
 
         <div className="mx-auto mt-24 max-w-[58rem]">
           <FAQSection />

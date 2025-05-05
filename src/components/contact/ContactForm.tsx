@@ -20,7 +20,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid business email"),
@@ -56,26 +55,28 @@ export function ContactForm() {
         status: "new",
       };
 
-      console.log("🚀 Submitting Data:", submissionData);
+      // Send email
+      const emailResponse = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-      const collectionRef = collection(db, "contact_submissions");
-      console.log("📂 Firestore Collection Reference:", collectionRef);
+      if (!emailResponse.ok) {
+        throw new Error("Failed to send email");
+      }
 
       // Add document to Firestore
-      const docRef = await addDoc(collectionRef, submissionData);
-      console.log("✅ Document successfully written with ID:", docRef.id);
+      // const collectionRef = collection(db, "contact_submissions");
+      // const docRef = await addDoc(collectionRef, submissionData);
       
-      toast.success("Thank you for your message. We'll get back to you soon!");
+      // toast.success("Thank you for your message. We'll get back to you soon!");
       form.reset();
       
     } catch (error: any) {
       console.error("❌ Error while submitting:", error);
-
-      console.error("Detailed error:", {
-        message: error.message,
-        code: error.code,
-        stack: error.stack
-      });
       
       toast.error(
         error.code === 'permission-denied' 
@@ -84,7 +85,6 @@ export function ContactForm() {
       );
     } finally {
       setIsSubmitting(false);
-      console.log("🔄 Submission process completed.");
     }
   }
 
@@ -98,7 +98,9 @@ export function ContactForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="John Doe" {...field} />
+                <Input placeholder="John Doe" 
+                     className="placeholder:text-gray-400"
+                     {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -112,26 +114,49 @@ export function ContactForm() {
             <FormItem>
               <FormLabel>Your Business Email</FormLabel>
               <FormControl>
-                <Input placeholder="john@company.com" type="email" {...field} />
+                <Input placeholder="john@company.com" 
+                     className="placeholder:text-gray-400"
+                type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="company"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Company Name</FormLabel>
               <FormControl>
-                <Input placeholder="Company Inc." {...field} />
+                <Input placeholder="Company Inc." 
+                {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
+        /> */}
+
+
+<FormField
+  control={form.control}
+  name="company"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Company Name</FormLabel>
+      <FormControl>
+        <Input 
+          placeholder="Company Inc."
+          className="placeholder:text-gray-400"
+          {...field}
         />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
 
         <FormField
           control={form.control}
@@ -164,7 +189,7 @@ export function ContactForm() {
               <FormControl>
                 <Textarea
                   placeholder="Tell us about your project or inquiry..."
-                  className="min-h-[120px]"
+                  className="min-h-[120px] placeholder:text-gray-400"
                   {...field}
                 />
               </FormControl>
