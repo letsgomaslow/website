@@ -4,30 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-
-const insights = [
-  {
-    date: "2024-02-09",
-    title: "The Future of Enterprise AI: Beyond ChatGPT",
-    description: "Explore how enterprises are moving beyond basic chatbots to implement sophisticated AI solutions that drive real business value.",
-    readTime: "5 min read",
-    category: "AI Strategy",
-  },
-  {
-    date: "2024-02-07",
-    title: "Open Source AI: A Cost-Effective Path to Innovation",
-    description: "Learn how open-source AI solutions can provide enterprise-grade capabilities while reducing costs and increasing flexibility.",
-    readTime: "4 min read",
-    category: "Open Source",
-  },
-  {
-    date: "2024-02-05",
-    title: "Implementing TRiSM: A Step-by-Step Guide",
-    description: "A practical guide to implementing the Trust, Risk, and Security Management framework in your AI initiatives.",
-    readTime: "6 min read",
-    category: "Security",
-  },
-];
+import { insights } from "@/data/insights";
 
 const container = {
   hidden: { opacity: 0 },
@@ -114,12 +91,12 @@ export function InsightsTimeline() {
                         {insight.description}
                       </p>
 
-                      <div className="pt-2">
+                      {/* <div className="pt-2">
                         <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-pink">
                           Read More
                           <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                         </span>
-                      </div>
+                      </div> */}
                     </Link>
                   </div>
                 </motion.div>
@@ -144,4 +121,4 @@ export function InsightsTimeline() {
       </div>
     </section>
   );
-} 
+}

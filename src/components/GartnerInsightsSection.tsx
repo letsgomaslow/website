@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import { BarChart3, TrendingUp, Users } from "lucide-react";
+import Link from "next/link";
 
-const insights = [
+export const insights = [
   {
     stat: "87%",
     label: "of enterprises",
@@ -102,7 +103,7 @@ export function GartnerInsightsSection() {
                       <div className="space-y-1">
                         <div className="text-4xl font-bold"
                           style={{
-                            color: "black" // Changed from gradient to solid black
+                            color: "black" 
                           }}
                         >
                           {insight.stat}
@@ -120,6 +121,16 @@ export function GartnerInsightsSection() {
               );
             })}
           </div>
+
+          {/* Add View All Button */}
+          <motion.div variants={item} className="text-center">
+            <Link 
+              href="/insights" 
+              className="inline-flex items-center justify-center rounded-md bg-primary px-8 py-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+            >
+              View All Insights
+            </Link>
+          </motion.div>
         </motion.div>
       </div>
     </section>
