@@ -263,7 +263,6 @@ export function useVoiceChat() {
 
   const handleMessage = async (ev: MessageEvent) => {
     const msg = JSON.parse(ev.data);
-    
     if (msg.type === 'response.function_call_arguments.done') {
       switch (msg.name) {
         case 'getTeamInfo':
@@ -305,7 +304,6 @@ export function useVoiceChat() {
           });
           break;
       }
-    
       const event = {
         type: 'conversation.item.create',
         item: {
@@ -334,7 +332,6 @@ export function useVoiceChat() {
 
       const dc = pc.createDataChannel('oai-events');
       setDataChannel(dc);
-
       dc.onopen = () => {
         configureDataChannel(dc);
       };
