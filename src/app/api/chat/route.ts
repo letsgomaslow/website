@@ -1,19 +1,16 @@
 import OpenAI from 'openai';
 import { NextResponse } from 'next/server';
 
-// Validate environment variable
 if (!process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
   throw new Error('Missing OPENAI_API_KEY environment variable');
 }
 
-// Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY
 });
 
 export async function POST(req: Request) {
   try {
-    // Parse and validate request body
     const body = await req.json();
 
     if (!body.messages || !Array.isArray(body.messages)) {
@@ -23,36 +20,46 @@ export async function POST(req: Request) {
       );
     }
 
-    // Log the incoming request (remove in production)
-    console.log('Incoming request:', body.messages);
+    // Add specific instructions to prevent defaulting to Maslow-related responses
+    const systemMessage = {
+      role: "system",
+      content: `You are a helpful AI assistant. Follow these guidelines strictly:
+        1. If you don't know something specific, simply say "I don't have information about that" instead of defaulting to Maslow-related responses
+        2. Keep responses concise and focused on the specific question
+        3. Allow for interruptions by checking for stop signals
+        4. Never make assumptions or provide incorrect information
+        5. If a topic is outside your knowledge, acknowledge it directly
+        6. Avoid mentioning Maslow unless specifically asked about the company`
+    };
 
-    // Make request to OpenAI
+    // Add the system message at the beginning of the conversation
+    const messages = [systemMessage, ...body.messages];
+
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      messages: body.messages,
+      messages,
       temperature: 0.7,
-      max_tokens: 500
+      max_tokens: 150, // Reduced for more concise responses
+      presence_penalty: 0.6, // Discourage repetitive responses
+      frequency_penalty: 0.6, // Encourage diverse responses
+      stop: ["STOP", "INTERRUPT"], // Add stop sequences for interruption
     });
 
-    // Validate OpenAI response
     if (!completion.choices[0]?.message?.content) {
       throw new Error('Invalid response from OpenAI');
     }
 
-    // Return successful response
     return NextResponse.json({
       message: completion.choices[0].message.content
     });
 
   } catch (error: any) {
-    // Log detailed error
     console.error('API Route Error:', {
       message: error.message,
       cause: error.cause,
       stack: error.stack
     });
 
-    // Return appropriate error response
     if (error.response?.status === 429) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
@@ -67,7 +74,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Generic error response
     return NextResponse.json(
       { error: 'Failed to process request. Please try again.' },
       { status: 500 }
