@@ -18,7 +18,7 @@ export function CaseStudyCard({
   outcome,
 }: CaseStudyCardProps) {
   return (
-    <div className="relative overflow-hidden rounded-lg border bg-background p-2">
+    <div className="relative overflow-hidden rounded-lg border bg-background p-2 h-full">
       <div className="flex h-full flex-col justify-between rounded-md p-6">
         <div>
           <div className="mb-4 flex items-center">
@@ -27,24 +27,24 @@ export function CaseStudyCard({
               {industry}
             </span>
           </div>
-          <h3 className="font-bold text-xl mb-4">{title}</h3>
+          <h3 className="font-bold text-xl mb-4 h-14 line-clamp-2">{title}</h3>
           
           <div className="space-y-4">
             <div>
               <h4 className="font-semibold mb-2">Challenge</h4>
-              <p className="text-muted-foreground">{problem}</p>
+              <p className="text-muted-foreground h-16 line-clamp-3">{problem}</p>
             </div>
             
             <div>
               <h4 className="font-semibold mb-2">Solution</h4>
-              <p className="text-muted-foreground">{solution}</p>
+              <p className="text-muted-foreground h-16 line-clamp-3">{solution}</p>
             </div>
             
             <div>
               <h4 className="font-semibold mb-2">Results</h4>
-              <div className="flex items-start">
+              <div className="flex items-start h-16">
                 <TrendingUp className="mr-2 h-5 w-5 text-primary mt-0.5" />
-                <p className="text-muted-foreground">{outcome}</p>
+                <p className="text-muted-foreground line-clamp-3">{outcome}</p>
               </div>
             </div>
           </div>
@@ -52,4 +52,4 @@ export function CaseStudyCard({
       </div>
     </div>
   );
-} 
+}

@@ -1,19 +1,5 @@
 "use client";
-
-import { User } from "lucide-react";
-
-const teamMembers = [
-  {
-    name: "Rakesh David",
-    role: "Founder & CEO",
-    bio: "A visionary leader with over 15 years of experience in driving enterprise transformation through AI.",
-  },
-  {
-    name: "Chan Chawla",
-    role: "Chief Opearting Officer",
-    bio: "The architect behind scalable, secure AI systems that empower enterprises to achieve measurable outcomes.",
-  },
-];
+import { TeamMember, teamMembers } from "@/DataModels/TeamDataModel";
 
 export function TeamSection() {
   return (
@@ -21,7 +7,7 @@ export function TeamSection() {
       <div className="mx-auto max-w-[58rem] text-center">
         <h2 className="font-heading text-3xl font-bold leading-[1.1] sm:text-4xl md:text-5xl">
           Meet Our{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#EE7BB3] to-[#6DC4AD] bg-clip-text text-transparent">
             Team
           </span>
         </h2>
@@ -34,8 +20,16 @@ export function TeamSection() {
             className="relative overflow-hidden rounded-lg border bg-background p-2 justify-self-center"
           >
             <div className="flex h-full flex-col items-center justify-between rounded-md p-6">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted">
-                <User className="h-12 w-12 text-muted-foreground" />
+              <div className="h-24 w-24 rounded-full overflow-hidden bg-muted">
+                <img
+                  src={member.imageUrl || '/images/people.png'}
+                  alt={member.name}
+                  className="h-15 w-15 object-cover p-5"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/images/people.png';
+                  }}
+                />
               </div>
               <div className="mt-6 text-center">
                 <h3 className="font-bold">{member.name}</h3>
@@ -52,4 +46,4 @@ export function TeamSection() {
       </div>
     </section>
   );
-} 
+}

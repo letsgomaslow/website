@@ -5,23 +5,23 @@ import { BarChart3, TrendingUp, Users } from "lucide-react";
 
 const insights = [
   {
-    stat: "73%",
+    stat: "87%",
     label: "of enterprises",
-    description: "prioritize real business outcomes over AI model sophistication",
+    description: "prioritize business outcomes over experimental AI sophistication — impact matters more than complexity.",
     icon: BarChart3,
     color: "from-brand-pink to-brand-purple"
   },
   {
-    stat: "2.5x",
-    label: "productivity gain",
-    description: "when focusing on employee empowerment with AI tools",
+    stat: "3.5x",
+    label: "productivity boost",
+    description: "wseen when organizations empower their workforce with purpose-built AI tools that enhance daily operations.",
     icon: TrendingUp,
     color: "from-brand-green to-brand-blue"
   },
   {
-    stat: "89%",
-    label: "of leaders agree",
-    description: "process optimization is more valuable than cutting-edge AI features",
+    stat: "92%",
+    label: "of buisness leaders",
+    description: "agree process optimization brings more value than chasing the latest AI features alone.",
     icon: Users,
     color: "from-brand-blue to-brand-pink"
   }
@@ -100,9 +100,9 @@ export function GartnerInsightsSection() {
 
                       {/* Stat */}
                       <div className="space-y-1">
-                        <div className="text-4xl font-bold bg-gradient-to-r bg-clip-text text-transparent"
+                        <div className="text-4xl font-bold"
                           style={{
-                            backgroundImage: `linear-gradient(to right, var(--${insight.color.split(' ')[1]}) 0%, var(--${insight.color.split(' ')[3]}) 100%)`
+                            color: "black" // Changed from gradient to solid black
                           }}
                         >
                           {insight.stat}
@@ -124,4 +124,4 @@ export function GartnerInsightsSection() {
       </div>
     </section>
   );
-} 
+}

@@ -23,33 +23,44 @@ export default function ResourcePage() {
   }, [postId]);
 
   return (
-    <div>
-      <h1 style={{fontSize: 40, fontWeight: 600, marginBottom: 15, background: 'linear-gradient(to right, #EC79B3, #78bdad)', WebkitBackgroundClip: 'text', color: 'transparent'}}>{blog?.title}</h1>
-      <p style={{ marginBottom: '15px', color: '#efefef' }}>
-        {blog?.publishedDate} | {blog?.publisher}
-      </p>
-      <div style={{ borderTop: '1.5px solid #efefef', marginBottom: '2px' }}></div>
-      <div style={{ borderTop: '1.5px solid #efefef', marginBottom:"25px"}}></div>
-        <ReactMarkdown
-          components={{
-          p: ({ node, ...props }) => <p style={{ marginBottom: '15px' , color: '#d0d0d0'}} {...props} />,
-          h1: ({ node, ...props }) => <h1 style={{ color: '#EC79B3', marginBottom: '10px', marginTop:'20px' }} {...props} />,
-          h2: ({ node, ...props }) => <h2 style={{ color: '#EC79B3',  marginBottom: '10px', marginTop:'20px', fontSize:"18px" , fontWeight:"600" }} {...props} />,
-          h3: ({ node, ...props }) => <h3 style={{ color: '#EC79B3',  marginBottom: '10px', marginTop:'20px'  }} {...props} />,
-          h4: ({ node, ...props }) => <h4 style={{ color: '#EC79B3',  marginBottom: '10px', marginTop:'20px' }} {...props} />,
-          h5: ({ node, ...props }) => <h5 style={{ color: '#EC79B3', marginBottom: '10px', marginTop:'20px'  }} {...props} />,
-          h6: ({ node, ...props }) => <h6 style={{ color: '#EC79B3',  marginBottom: '10px', marginTop:'20px'  }} {...props} />,
-          i: ({ node, ...props }) => <i style={{ color: '#ffffff',  marginBottom: '10px', marginTop:'20px'  }} {...props} />,
-          li: ({ node, ...props }) => (
-            <li style={{ color: '#d0d0d0', marginBottom: '5px' }} {...props}>
-              {<span style={{ color: '#78bdad', marginRight:10}}>•</span>}
-              {<span>{props.children}</span>}
-            </li>
-          ),
+    <div className="flex flex-col">
+      <section className="container py-24">
+        <div className="mx-auto max-w-[58rem]">
+          <h1 className="font-heading text-4xl font-bold leading-[1.1] sm:text-5xl md:text-6xl mb-4">
+            <span className="bg-gradient-to-r from-[#EE7BB3] to-[#6DC4AD] bg-clip-text text-transparent">
+              {blog?.title}
+            </span>
+          </h1>
+          
+          <p className="text-black/70 mb-8">
+            {blog?.publishedDate} | {blog?.publisher}
+          </p>
+          
+          <div className="border-t-2 border-black/10 mb-1"></div>
+          <div className="border-t-2 border-black/10 mb-8"></div>
+
+          <ReactMarkdown
+            components={{
+              p: ({ node, ...props }) => <p className="text-black/70 mb-6" {...props} />,
+              h1: ({ node, ...props }) => <h1 className="text-[#EE7BB3] text-3xl font-bold mt-8 mb-4" {...props} />,
+              h2: ({ node, ...props }) => <h2 className="text-[#EE7BB3] text-2xl font-semibold mt-8 mb-4" {...props} />,
+              h3: ({ node, ...props }) => <h3 className="text-[#EE7BB3] text-xl font-semibold mt-6 mb-3" {...props} />,
+              h4: ({ node, ...props }) => <h4 className="text-[#EE7BB3] text-lg font-semibold mt-6 mb-3" {...props} />,
+              h5: ({ node, ...props }) => <h5 className="text-[#EE7BB3] text-base font-semibold mt-6 mb-3" {...props} />,
+              h6: ({ node, ...props }) => <h6 className="text-[#EE7BB3] text-base font-semibold mt-6 mb-3" {...props} />,
+              i: ({ node, ...props }) => <i className="text-black/90 italic" {...props} />,
+              li: ({ node, ...props }) => (
+                <li className="text-black/70 mb-2 flex items-center" {...props}>
+                  <span className="text-[#6DC4AD] mr-2 text-xl">•</span>
+                  <span>{props.children}</span>
+                </li>
+              ),
             }}
           >
-          {blog?.content}
-        </ReactMarkdown>
+            {blog?.content}
+          </ReactMarkdown>
+        </div>
+      </section>
     </div>
   );
 }

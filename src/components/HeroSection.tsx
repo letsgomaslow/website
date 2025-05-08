@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -8,11 +7,11 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 // import { renderCanvas } from "@/components/ui/canvas";
 import { Button } from "@/components/ui/button";
 import { MagneticButton } from "@/components/ui/magnetic-button";
+import { useState } from "react";
+import { StrategySessionForm } from "@/components/StrategySessionForm";
 
 export function HeroSection() {
-  // useEffect(() => {
-  //   renderCanvas();
-  // }, []);
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden">
@@ -22,16 +21,16 @@ export function HeroSection() {
           src="/images/hero-bg.jpg"
           alt="AI Technology Background"
           fill
-          className="object-cover"
+          className="object-cover hidden dark:block"
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background dark:from-background/80 dark:via-background/50 dark:to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 dark:from-background/80 dark:via-transparent dark:to-background/80" />
       </div>
       
-      <div className="container relative py-layout-2xl">
-        <div className="mx-auto max-w-[90rem]">
+      <div className="container relative py-layout-2xl pointer-events-none">
+        <div className="mx-auto max-w-[90rem] pointer-events-auto">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -81,41 +80,54 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center z-10"
             >
-              <MagneticButton className="w-full sm:w-auto">
-                <Link href="/contact" className="w-full sm:w-auto">
+              <Link 
+                href="https://calendly.com/maslow-ai/30min" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <MagneticButton className="w-full sm:w-auto">
                   <Button 
                     variant="gradient" 
                     size="lg"
                     className="w-full sm:w-auto text-base sm:text-lg font-semibold group"
                   >
-                    Discover Your AI Pace
+                    Book a 30-Minute AI Strategy Session
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Button>
-                </Link>
-              </MagneticButton>
+                </MagneticButton>
+              </Link>
               
-              <MagneticButton className="w-full sm:w-auto">
-                <Link href="/chat" className="w-full sm:w-auto">
+              <Link  
+                href="https://conversationalai.maslow.ai/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
+                <MagneticButton className="w-full sm:w-auto">
                   <Button 
                     variant="outline" 
                     size="lg"
                     className="w-full sm:w-auto text-base sm:text-lg font-semibold group"
                   >
-                    Speak to a Virtual Advisor
+                    Talk to our AI Sales Avatar
                     <MessageCircle className="ml-2 h-5 w-5 transition-transform group-hover:rotate-12" />
                   </Button>
-                </Link>
-              </MagneticButton>
+                </MagneticButton>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
       </div>
+
+      {/* Show the form popup when showForm is true */}
+      {showForm && <StrategySessionForm onClose={() => setShowForm(false)} />}
 
       {/* Decorative Elements */}
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />
       <div className="absolute bottom-0 left-1/2 h-24 w-px -translate-x-1/2 bg-border/50" />
     </section>
   );
-} 
+}

@@ -43,7 +43,6 @@ export function WelcomeSection() {
               className="object-cover"
             />
             {/* Decorative Elements */}
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
               <div className="w-full h-1 bg-gradient-to-r from-brand-pink to-brand-green rounded-full" />
             </div>
@@ -52,4 +51,4 @@ export function WelcomeSection() {
       </div>
     </section>
   );
-} 
+}
